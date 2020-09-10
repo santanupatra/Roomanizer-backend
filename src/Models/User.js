@@ -51,7 +51,7 @@ const schema = new Schema({
     },
     userType: {
         type: String,
-        enum: ['admin','chef','customer'],
+        enum: ['admin','customer'],
         default: "customer"
     },
     country: {
@@ -97,10 +97,10 @@ const schema = new Schema({
         type: Boolean, 
         default: false
     }, 
-    isChefProfileComplete: {
-        type: Boolean, 
-        default: false
-    },           
+    // isChefProfileComplete: {
+    //     type: Boolean, 
+    //     default: false
+    // },           
     createdDate: {
         type: Date, 
         default: Date.now
