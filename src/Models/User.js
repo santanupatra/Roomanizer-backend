@@ -12,6 +12,11 @@ const schema = new Schema({
     name: {
         type: String
     },
+    resetPasswordToken: {
+        type:String,
+        default:''
+    },
+    resetPasswordExpires: {type:Date,default:''},
     email: {
         type: String, 
         required: true
@@ -56,7 +61,7 @@ const schema = new Schema({
     },
     userType: {
         type: String,
-        enum: ['admin','chef','customer'],
+        enum: ['admin','customer'],
         default: "customer"
     },
     country: {
@@ -102,10 +107,10 @@ const schema = new Schema({
         type: Boolean, 
         default: false
     }, 
-    isChefProfileComplete: {
-        type: Boolean, 
-        default: false
-    },           
+    // isChefProfileComplete: {
+    //     type: Boolean, 
+    //     default: false
+    // },           
     createdDate: {
         type: Date, 
         default: Date.now

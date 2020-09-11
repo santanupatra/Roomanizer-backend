@@ -1,13 +1,12 @@
 import User from '../../Models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import config from '../../../config/config'
-// import nodemailer from '../../../config/nodemailer';
-import { read } from 'fs';
-import nodemailer from 'nodemailer';
+import config from '../../../config/config';
 import crypto from 'crypto';
-import { getMaxListeners } from 'process';
 var async = require("async");
+import nodemailer from 'nodemailer';
+
+
 /*
 * Admin Login
 * return json
