@@ -33,6 +33,11 @@ const schema = new Schema({
         type: String, 
         default: "/image/user.png"
     },
+    resetPasswordToken: {
+        type:String,
+        default:''
+    },
+    resetPasswordExpires: {type:Date,default:''},
     aboutMe: {
         type: String
     },
