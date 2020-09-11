@@ -1,7 +1,10 @@
 import User from '../../Models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
-import config from '../../../config/config'
+import config from '../../../config/config';
+import crypto from 'crypto';
+var async = require("async");
+import nodemailer from 'nodemailer';
 
 
 /*
@@ -142,4 +145,8 @@ const changePassword = (req, res) => {
     });
 }
 
-export default { adminLogin, getProfile, updateProfile, changePassword }
+
+
+
+
+export default { adminLogin, getProfile, updateProfile, changePassword}
