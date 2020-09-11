@@ -5,6 +5,8 @@ const defaultData = {
   JWT_ALGORITHM: 'HS256',
   HOST_EMAIL: 'roomanizer',
   HOST_EMAIL_PASSWORD: 'rooman1zer2020',
+  HOST_EMAIL_1: 'mail@cbnits.com',
+  HOST_EMAIL_PASSWORD_1: ' w#llcbn1ts',
   OTP_EMAILTEMPLATE_PRIMARY_ID:'',
   SETTING_PRIMARY_ID:"5f588a2411a84034b8bb3fbf",
   // WEB_URL: 'http://111.93.169.90:5074/',
