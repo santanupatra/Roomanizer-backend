@@ -12,6 +12,11 @@ const schema = new Schema({
     name: {
         type: String
     },
+    resetPasswordToken: {
+        type:String,
+        default:''
+    },
+    resetPasswordExpires: {type:Date,default:''},
     email: {
         type: String, 
         required: true
