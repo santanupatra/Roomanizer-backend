@@ -2,8 +2,13 @@ import User from '../../Models/User';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../../../config/config';
-
-
+import crypto from 'crypto';
+var async = require("async");
+var mongoose = require('mongoose');
+import nodemailer from 'nodemailer';
+// var bcrypt = require('bcryptjs');
+var salt = 10;
+import sendMail from '../../../config/nodemailer';
 
 
 /*
@@ -144,5 +149,173 @@ const changePassword = (req, res) => {
         res.status(401).json({ msg: "Admin not found with this id" });
     });
 }
+// Forget work
+const forgotPassword = async (request, response, next) => {
+  let email = request.body.email;
+  console.log(email)
+  if (request.body.email == null) {
+    response.status(201).json({ ack: false, details: "parameter missing..." });
+  } else {
+    try {
+      const userDetails = await User
+        .find({ email:email , isDeleted: false,isAdmin:true });
+        console.log(userDetails)
+        // console.log(userDetails[0])
+      if (userDetails.length == 0) {
+        response
+          .status(201)
+          .send({ ack: false, details: "Invalid email. Please try again" });
+      } else {
+        let userName = userDetails[0].firstName;
+        console.log("fghjkdfghi",userName)
+        // const emailTemplateDetails = await User
+        //   .findOne({ _id: '5f577f2f4548a2203c1ceff6', isDeleted: false });
+        // let emailTempp = email;
+        // let emailSubject = emailTemplateDetails.subject;
+        // let emailrowContent = emailTemplateDetails.content;
+        //* 6 digit otp create /
+        let otp = Math.floor(Math.random() * 999999) + 100000;
+        // const otptime = Date.now() + 3600000;
+        // console.log(user.otptime)
+        const subject = "Request To active chef Account";
+        const body = "Hi "+userName+",  <br/>Click this link to active your account <br>"+otp;
+        // let emailContentReplace = emailrowContent.replace(/(<([^>]+)>)/ig, "");
+        // let emailContent = emailContentReplace.replace(/&nbsp;/ig, ' ');
+        // let emailText1 = emailContent.replace("[USER]", userName);
+        // let emailText = emailText1.replace("[OTP]", otp);
 
-  export default { adminLogin, getProfile, updateProfile, changePassword}
+        let transporter = nodemailer.createTransport({
+          host: "111.93.169.90",
+          port: 27929,
+          secure: false, // true for 465, false for other ports
+          service: "gmail",
+          auth: {
+            user: config.HOST_EMAIL_1, // generated ethereal user
+            pass: config.HOST_EMAIL_PASSWORD_1 // generated ethereal password
+          }
+        });
+      //   console.log(req.body.email)
+        const mailOptions = {
+          to:email,
+          from: config.HOST_EMAIL_1,
+          subject: subject,
+          text:"Hi "+userName+",  <br/>Click this link to active your account <br>"+otp,
+          // text:'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+          // 'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+          // 'reset/' + otp + '\n\n' +
+          // 'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+        };
+        console.log(mailOptions)
+        transporter.sendMail(mailOptions, function (err, info) {
+          if (err) {
+            console.log(err);
+            return err
+          } else {
+            console.log('Email sent : ' + info.response);
+          //   return info.response;
+          res.status(200).send('recovery email sent');
+          }
+        })
+
+
+
+        
+        // let sendMail = nodemailer.send({email,subject,body});
+        console.log(userDetails)
+        const updateUser = await User.findOneAndUpdate(
+          { _id: userDetails[0]._id },
+          { $set: { otp: otp } },
+          { new: true }
+        );
+        console.log(otp)
+        return response
+          .status(200)
+          .send({ ack: true, details: "OTP Send Successfully" });
+      }
+    } catch (error) {
+      console.log("error--------", error);
+      return response.status(500).send({ ack: false, details: error.message });
+    }
+  }
+};
+
+//* Check OTP /
+// const checkOtp = async (request, response, next) => {
+//   let email = request.body.email;
+//   let otp = request.body.otp;
+//   console.log(request.body)
+//   if (request.body.email == null || request.body.otp == null) {
+//     response.status(201).json({ ack: false, details: "parameter missing..." });
+//   } else {
+//     try {
+//       const userDetails = await User
+//         .find({ email: email, otp: otp, isDeleted: false });
+//         console.log(userDetails)
+//       if (userDetails.length == 0) {
+//         return response
+//           .status(201)
+//           .json({ ack: false, details: "Otp is Not Matched" });
+//       } else {
+//         return response
+//           .status(200)
+//           .json({ ack: true, details: "Otp Matches Successfully" });
+//       }
+//     } catch (error) {
+//       response.status(500).json({ ack: false, details: error.message });
+//     }
+//   }
+// };
+
+//* Update Password /
+const updatePassword = async (request, response, next) => {
+  let email = request.body.email;
+  let password = request.body.password;
+  let otp=request.body.otp;  
+  if (request.body.email == null || request.body.otp == null) {
+    response.status(201).json({ ack: false, details: "parameter missing..." });
+  } else {
+    try {
+      const userDetails = await User
+        .find({ email: email, otp: otp, isDeleted: false });
+        console.log(userDetails)
+      if (userDetails.length == 0) {
+        return response
+          .status(201)
+          .json({ ack: false, details: "Otp is Not Matched" });
+      } else {
+        if (request.body.email == null || request.body.password == null||request.body.otp==null) {
+          response.status(201).json({ ack: false, details: "parameter missing..." });
+        } else {
+          try {
+            const userDetails = await User
+              .find({ email: email, isDeleted: false });
+            if (userDetails.length == 0) {
+              return response
+                .status(201)
+                .json({ ack: false, message: "Invalid email. Please try again" });
+            } else {
+              // console.log("in else");
+              let newPass = bcrypt.hashSync(password, salt);
+              // console.log("newPass", newPass)
+              await User.findOneAndUpdate(
+                { _id: userDetails[0]._id },
+                { $set: { password: newPass } }
+              );
+              // console.log(" dfjskjdslk");
+              return response
+                .status(200)
+                .json({ ack: true, details: "Password Change Successfully" });
+      
+            }
+          } catch (error) {
+            response.status(500).json({ ack: false, details: error.message });
+          }
+        }
+      }
+    } catch (error) {
+      response.status(500).json({ ack: false, details: error.message });
+    }
+  }
+
+};
+export default { adminLogin, getProfile, updateProfile, changePassword ,forgotPassword,updatePassword}

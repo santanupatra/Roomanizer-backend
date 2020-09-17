@@ -1,7 +1,8 @@
 import mongoose from 'mongoose';
-const { Schema } = mongoose;
+const  {Schema}  = mongoose;
 // Creating user schema
 const schema = new Schema({
+    // _id: {String},
     firstName: {
         type: String,
         required: true
@@ -30,12 +31,14 @@ const schema = new Schema({
         type: String, 
         default: "/image/user.png"
     },
-    
     aboutMe: {
         type: String
     },
     otp: {
         type: String
+    },
+    otptime:{
+        type:String
     },
     longitude: {
         type: Number
