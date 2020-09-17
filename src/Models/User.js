@@ -13,15 +13,7 @@ const schema = new Schema({
     name: {
         type: String
     },
-    resetPasswordToken: {
-        type:String,
-        default:''
-    },
-    resetPasswordExpires: {type:Date,default:''},
-    email: {
-        type: String, 
-        required: true
-    },
+    
     dateOfBirth: {
         type: String, 
     },                   
@@ -60,7 +52,7 @@ const schema = new Schema({
     },
     userType: {
         type: String,
-        enum: ['admin','customer'],
+        enum: ['admin','customer','landlord'],
         default: "customer"
     },
     country: {
