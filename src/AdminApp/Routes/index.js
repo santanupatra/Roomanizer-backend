@@ -1,6 +1,7 @@
 import express from 'express';
 import admin from './AdminRoute';
 import user from './UserRoute';
+import room from './RoomRoute';
 // import chef from './ChefRoute';
 import setting from './SettingRoute';
 // import cms from './CmsRoute';
@@ -21,6 +22,7 @@ router.use(express.json());
 router.use('/admin-api', admin);
 router.use('/user-api', user);
 // router.use('/chef-api', chef);
+router.use('/room-api',room);
 router.use('/setting-api', setting);
 // router.use('/cms-api', cms);
 // router.use('/email-api', email);
