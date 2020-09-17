@@ -7,7 +7,7 @@ import setting from './SettingRoute';
 // import email from './EmailTemplateRoute';
 // import food from './FoodRoute'
 // import service from './ServiceRoute';
-// import city from './CityRoute';
+    import city from './CityRoute';
 // import province from './ProvinceRoute';
 // import dashboard from './DashboardRoute';
 
@@ -26,7 +26,7 @@ router.use('/setting-api', setting);
 // router.use('/email-api', email);
 // router.use('/food-api', food);
 // router.use('/service-api', service);
-// router.use('/city-api', city);
+router.use('/city-api', city);
 // router.use('/province-api', province);
 // router.use('/dashboard-api', dashboard);
 
