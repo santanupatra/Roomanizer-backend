@@ -1,7 +1,7 @@
 import express from 'express';
 import admin from './AdminRoute';
 import user from './UserRoute';
-// import chef from './ChefRoute';
+import landlord from './LandlordRoute';
 import setting from './SettingRoute';
 // import cms from './CmsRoute';
 // import email from './EmailTemplateRoute';
@@ -20,7 +20,7 @@ router.use(express.json());
 // Routes starting with specific path...
 router.use('/admin-api', admin);
 router.use('/user-api', user);
-// router.use('/chef-api', chef);
+router.use('/landlord-api', landlord);
 router.use('/setting-api', setting);
 // router.use('/cms-api', cms);
 // router.use('/email-api', email);

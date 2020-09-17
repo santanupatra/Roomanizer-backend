@@ -57,7 +57,7 @@ const schema = new Schema({
     },
     userType: {
         type: String,
-        enum: ['admin','customer'],
+        enum: ['admin','customer','landlord'],
         default: "customer"
     },
     country: {
