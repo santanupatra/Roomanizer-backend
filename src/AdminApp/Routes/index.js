@@ -1,6 +1,7 @@
 import express from 'express';
 import admin from './AdminRoute';
 import user from './UserRoute';
+import cms from './CmsRoute';
 import room from './RoomRoute';
 // import chef from './ChefRoute';
 import landlord from './LandlordRoute';
@@ -25,6 +26,7 @@ router.use('/user-api', user);
 // router.use('/chef-api', chef);
 router.use('/room-api',room);
 router.use('/landlord-api', landlord);
+router.use('/cms-api', cms);
 router.use('/setting-api', setting);
 // router.use('/cms-api', cms);
 // router.use('/email-api', email);
