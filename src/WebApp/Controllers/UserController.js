@@ -1,6 +1,6 @@
 
 import User from '../../Models/User';
-import chefServices from '../../Models/chefServices';
+//import chefServices from '../../Models/chefServices';
 import config from '../../../config/config'
 import bcrypt from 'bcrypt';
 import nodeMailer from '../../../config/nodemailer'
