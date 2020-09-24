@@ -7,7 +7,7 @@ import room from './RoomRoute';
 import landlord from './LandlordRoute';
 import setting from './SettingRoute';
 // import cms from './CmsRoute';
-// import email from './EmailTemplateRoute';
+import email from './EmailTemplateRoute';
 // import food from './FoodRoute'
 // import service from './ServiceRoute';
     import city from './CityRoute';
@@ -29,7 +29,7 @@ router.use('/landlord-api', landlord);
 router.use('/cms-api', cms);
 router.use('/setting-api', setting);
 // router.use('/cms-api', cms);
-// router.use('/email-api', email);
+router.use('/email-api', email);
 // router.use('/food-api', food);
 // router.use('/service-api', service);
 router.use('/city-api', city);
