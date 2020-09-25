@@ -135,7 +135,7 @@ const login = (req, res) => {
 * return json
 */
 
-exports.socialLogin = async(request, response) => {
+const socialLogin = async(request, response) => {
     const session = request.db_session;
     //console.log('request====',request.body);
     if(request.body.name == null || request.body.email== null || request.body.socialMediaType == null ||request.body.socialId == null){
@@ -241,4 +241,4 @@ exports.socialLogin = async(request, response) => {
 
 
 
-export default {signUp, activeAccount, login, socialLogin }
+export default {signUp, activeAccount,login, socialLogin }
