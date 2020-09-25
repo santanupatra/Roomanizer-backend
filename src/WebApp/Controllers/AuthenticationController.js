@@ -5,9 +5,79 @@ import jwt from 'jsonwebtoken';
 import config from '../../../config/config'
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
+import nodeMailer from '../../../config/nodemailer'
 //import moment from "moment";
+/**
+ * User Sign Up
+ * return JSON
+ */
+const signUp = async(req, res) => {
+    if(req.body.email == null || req.body.password == null || req.body.confirmPassword == null) {
+        return res.status(400).json({ ack:false,msg:"Parameter missing..." })
+    }
+    try {
+        const emailExist = await User.find({email: req.body.email});
+        if(emailExist.length > 0){
+                res.status(200).json({ack:false,msg:"Email already exist"});
+        } else {
+          if(req.body.password === req.body.confirmPassword){
+                const allData = req.body
+                const hash = bcrypt.hashSync(allData.password, config.SALT_ROUND);
+                delete allData.password;
+                allData.password = hash;
+                allData.isEmailVerified = false;
+                allData.isActive = false;
+                const addUser = await new User(allData).save();
+                if(addUser){
+                    const to = req.body.email;
+                    const subject = "Request To active chef Account";
+                    const url = config.WEB_URL+"active/"+ req.body.email;
+                    console.log("url==",url);
+                    var linkHref = "<a href='" +url+ "'>Click Here</a>";
+                    const body = "Hi,<br/> <br/>Click this link to active your account <br>"+ linkHref  ;
+                    
+                    const response = await nodeMailer.sendMail(subject,body,to);
+                    res.status(200).json({ack:true,msg:"User has been registered Successfully,Please check your email to active account.", data:addUser});
+                }
+               
+          }else {
+               res.status(200).json({ack:false, msg:"Confirm Password is not matched"});
+                  
+            }
+            
+        }
+    } catch (err) {
+        console.log("Error => ",err.message);
+        res.status(500).json({msg:"Something went wrong."});
+    }
+}
+/**
+ * Active user accout to login
+ * return JSON
+ */
+const activeAccount = async(req,res)=>{
+    if(req.params.email == null) {
+        return res.status(400).jsn({ ack:false, msg:"Parameter missing !!!" });
+    }
+    try {
+        const userDetails = await User.findById(
+            { email: req.params.email });
+        const updatechef = await User.findByIdAndUpdate(
+            { _id: userDetails._id },
+            {
+                $set: {isEmailVerified:true,
+                        isActive:true}
+            }
+        );
+        res.status(200).json({ack:true, data:userDetails});
+        
+    } catch(err) {
+        console.log("Error => ", err.message);
+        res.status(500).json({ msg: "Something went wrong" });
+    }
+}
 /*
-* Admin Login
+* User Login
 * return json
 */
 
@@ -33,7 +103,8 @@ const login = (req, res) => {
                     ).then(res =>{
                         let logData = {
                             userId:userDetails._id,
-                            type:"login"
+                            type:"login",
+                            loginType:"web"
                         }
                         new LoginDetails(logData).save(); 
                     })
@@ -59,144 +130,115 @@ const login = (req, res) => {
         res.status(401).json({ msg: "Invalid email" });
     });
 }
+/*
+* Social Media Login
+* return json
+*/
 
-/**
- * getProfile
- * Get admin profile details
- * return JSON
- */
-const getProfile = async(req, res) => {
-    if(req.params.userId == null) {
-        return res.status(400).jsn({ack:false, msg:"Parameter missing !!!" });
+exports.socialLogin = async(request, response) => {
+    const session = request.db_session;
+    //console.log('request====',request.body);
+    if(request.body.name == null || request.body.email== null || request.body.socialMediaType == null ||request.body.socialId == null){
+        return response.status(400).send({ack: false, details:"Parameter missing..."})
     }
-    try {
-        //const userDetails = await User.findById({ _id: req.params.userId });
-            // let filterData = {
-            //     _id: {$in:[req.params.userId]}
-            // }
-            const userDet = await User.aggregate([
+      try{
+            let name = request.body.name;
+            let arrName = name.split(" ");
+            let firstName = arrName.slice(0, 1).join(' ');
+            let lastName = arrName.slice(1, arrName.length).join(' ');
+        const checkForIfExists = await User.find({'email':request.body.email}, {}, {session});
+      if(checkForIfExists.length > 0){
+              const token = jwt.create({id: checkForIfExists[0]._id}, {subject: "Bearer", audience: 'all'});
+              const updateUser = await User.findByIdAndUpdate(
+                { _id: checkForIfExists[0]._id },
                 {
-                    $match: {'_id':ObjectId(req.params.userId)}
-                },
-                {
-                    $lookup: {
-                        from: 'chef_services',
-                        localField: '_id',
-                        foreignField: 'chefId',
-                        as: 'chefServices'
-                    }
-                },
-                
-                {
-                    $lookup: {
-                        from: 'login_details',
-                        localField: '_id',
-                        foreignField: 'userId',
-                        as: 'LoginDetails'
+                    $set: {
+                        email: request.body.email,
+                        firstName:firstName,
+                        lastName: lastName,
+                        name:request.body.name,
+                        profilePicture:request.body.profilePicture,
+                        socialId:request.body.socialId,
+                        isSocialMediaUser:true,
+                        socialMediaType:request.body.socialMediaType,
+                        lastLogin: new Date().toISOString()
                     }
                 }
-                
-            ]);
-
-        let loginDetails = await LoginDetails.find({userId:req.params.userId,type:"login",isActive:true}); 
-        let todayLoginCount = loginDetails.length; 
-        let totalLoginCount= userDet[0].LoginDetails.length;
-        let UserDetails = {
-            userDetails:userDet,
-            totalLoginCount:totalLoginCount,
-            todayLoginCount:todayLoginCount,
-            lastLogin:userDet[0].lastLogin
-        }
-        console.log('totalLoginCount',loginDetails,'data==',new Date('2020 ,08, 22'));
-      // if(userDetails){
-         res.status(200).json({ack:true, data: UserDetails });
-    //    }else{
-    //     res.status(200).json({ack:false, data: [] });
-
-    //    }
-    } catch(err) {
-        console.log("Error => ", err.message);
-        res.status(500).json({ msg: "Something went wrong" });
-    };
-}
-
-/**
- * updateProfile
- * Here update admin profile details
- * return JSON
- */
-const updateProfile = async(req, res) => {
-    if(req.params.adminId == null) {
-        return res.status(400).jsn({ msg:"Parameter missing !!!" });
-    }
-    try {
-        let allData = req.body;
-        if (req.file) {
-            allData.profilePicture = config.USER_IMAGE_PATH + req.file.filename
-            const updateAdmin = await User.findByIdAndUpdate(
-                { _id: req.params.adminId },
-                {
-                    $set: allData
-                }
-            );
-            res.status(200).json({ msg: "Profile updated successfully" });
-        } else {
-            const updateAdmin = await User.findByIdAndUpdate(
-                { _id: req.params.adminId },
-                {
-                    $set: allData
-                }
-            );
-            res.status(200).json({ msg: "Profile updated successfully" });
-        }
-    } catch(err) {
-        console.log("Error => ", err.message);
-        res.status(500).json({ msg: "Something went wrong" });
-    }
-}
-
-/**
- * changePassword
- * Here update admin password
- * return JSON
- */
-const changePassword = (req, res) => {
-    if (req.params.adminId == null || req.body.currentPassword == null || req.body.newPassword == null || req.body.confirmPassword == null) {
-        return res.status(400).json({ msg: "Parameter missing.." });
-    }
-    User.findById({
-        _id: req.params.adminId
-    })
-    .then(user => {
-        if (bcrypt.compareSync(req.body.currentPassword, user.password)) {
-            if (req.body.newPassword == req.body.confirmPassword) {
-                const hash = bcrypt.hashSync(req.body.newPassword, config.SALT_ROUND);
-                User.findByIdAndUpdate(
-                    { _id: req.params.adminId },
-                    {
-                        $set: {
-                            password: hash
-                        }
-                    }
-                )
-                .then(() => {
-                    res.status(200).json({ msg: "Password updated successfully" });
-                })
-                .catch(err => {
-                    console.log('Error => ', err.msg);
-                    res.status(500).json({ msg: "Something not right" });
-                });
-            } else {
-                res.status(401).json({ msg: "New password and confirm password does not match" });
+            )
+            let logData = {
+                userId:userDetails._id,
+                type:"login",
+                loginType:"social"
             }
-        } else {
-            res.status(400).json({ msg: "Current password is wrong" });
-        }
-    })
-    .catch(err => {
-        console.log('Error => ', err.msg);
-        res.status(401).json({ msg: "Admin not found with this id" });
-    });
-}
+            new LoginDetails(logData).save(); 
+            const userData = await User.findById({ _id: checkForIfExists[0]._id });
+            response.status(200).json({ack: true, details:'Logged in succesfully', token:token, data:userData});
+      }else{
+            
+          const userExist = await User.find({ socialId: request.body.socialId });
+          if(userExist.length > 0){
+            const token = jwt.create({id: userExist[0]._id}, {subject: "Bearer", audience: 'all'});
+            const updateUser = await User.findByIdAndUpdate(
+              { _id: userExist[0]._id },
+              {
+                  $set: {
+                      email: request.body.email,
+                      firstName:firstName,
+                      lastName: lastName,
+                      name:request.body.name,
+                      profilePicture:request.body.profilePicture,
+                      socialId:request.body.socialId,
+                      isSocialMediaUser:true,
+                      socialMediaType:request.body.socialMediaType,
+                      lastLogin: new Date().toISOString(),
+                  }
+              }
+          )
+            let logData = {
+                userId:userDetails._id,
+                type:"login",
+                loginType:"social"
+            }
+            new LoginDetails(logData).save(); 
+            const userData = await User.findById({ _id: userExist[0]._id });
+            response.status(200).json({ack: true, details:'Logged in succesfully', token:token, data:userData});
+          } else{
+              const users = await User.create({
+                email: request.body.email,
+                firstName:firstName,
+                lastName: lastName,
+                name:request.body.name,
+                profilePicture:request.body.profilePicture,
+                socialId:request.body.socialId,
+                isSocialMediaUser:true,
+                socialMediaType:request.body.socialMediaType,
+                lastLogin: new Date().toISOString(),
+              });
+              let logData = {
+                userId:userDetails._id,
+                type:"login",
+                loginType:"social"
+            }
+            new LoginDetails(logData).save();   
+            const userData = await User.findById({ _id: users._id });
+            const token = jwt.create({id: userData._id}, {subject: "Bearer", audience: 'all'});
+  
+            response.status(200).json({ack: true, details:'Logged in succesfully', token:token, data:userData});
+  
+          } 
+           
+      }
+      }catch(error){
+        console.error(error);
+        response.status(500).json({ack: false, details: 'Server error'});
+      }
+    
+          
+    
+  };
 
-export default { login, getProfile, updateProfile, changePassword }
+
+
+
+
+export default {signUp, activeAccount, login, socialLogin }
