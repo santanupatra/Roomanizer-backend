@@ -82,6 +82,16 @@ const schema = new Schema({
     AvarageRating: {
         type: Number
     },
+    socialId:{
+        type:String
+    },
+    socialMediaType: {
+        type:String
+    },
+    isSocialMediaUser:{
+        type:Boolean,
+        default:false
+    },
     isNotification: {
         type: Boolean,
         default: true
@@ -98,10 +108,6 @@ const schema = new Schema({
         type: Boolean, 
         default: false
     }, 
-    // isChefProfileComplete: {
-    //     type: Boolean, 
-    //     default: false
-    // },           
     createdDate: {
         type: Date, 
         default: Date.now

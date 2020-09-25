@@ -5,8 +5,9 @@ import Authentication from '../../../middleware/isAuth';
 // intializing express router
 const router = express.Router();
 
-router.post('/Login', AuthenticationController.login);
-router.get('/profileDetails/:userId',Authentication,AuthenticationController.getProfile);
-router.put('/admin/:adminId', upload.uploadUserImage,AuthenticationController.updateProfile);
-router.put('/admin/change-password/:adminId', AuthenticationController.changePassword);
+router.post('/userSignUp', AuthenticationController.signUp);
+router.put('/acctiveAccount/:email', AuthenticationController.activeAccount);
+router.post('/userLogin', AuthenticationController.login);
+router.post('/socialLogin', AuthenticationController.socialLogin);
+
 export default router;
