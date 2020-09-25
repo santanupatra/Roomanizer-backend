@@ -5,14 +5,14 @@ import cors from 'cors';
 import config from './config/config';
 import header from './middleware/header';
 import AdminRoute from './src/AdminApp/Routes';
-// import WebRoute from './src/WebApp/Routes';
+import WebRoute from './src/WebApp/Routes';
 // import MobileRoute from './src/MobileApp/Routes';
 const app = express(); // Initialize our express app
 const port = process.env.PORT || 5073;
 app.use(cors());
 // app.use('/app', MobileRoute); // Mobile Route 
 app.use('/admin', AdminRoute); //Admin Route
-// app.use('/web', WebRoute); //Website Route
+app.use('/web', WebRoute); //Website Route
 app.get('/', (req, res) => {
   res.send('Hello World!');
 });
