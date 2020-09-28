@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../../../config/config'
 import mongoose from "mongoose";
+import nodemailer from 'nodemailer';
 const ObjectId = mongoose.Types.ObjectId;
 import nodeMailer from '../../../config/nodemailer'
 //import moment from "moment";
@@ -135,6 +136,148 @@ const login = (req, res) => {
 * return json
 */
 
+/**
+ * forgotPassword
+ * return JSON
+ */
+const forgotPassword = async (request, response, next) => {
+    let email = request.body.email;
+    console.log(email)
+    if (request.body.email == null) {
+      response.status(201).json({ ack: false, details: "parameter missing..." });
+    } else {
+      try {
+        const userDetails = await User
+          .find({ email:email , isDeleted: false });
+          console.log(userDetails)
+          // console.log(userDetails[0])
+        if (userDetails.length == 0) {
+          response
+            .status(201)
+            .send({ ack: false, details: "Invalid email. Please try again" });
+        } else {
+          let userName = userDetails[0].firstName;
+          console.log("fghjkdfghi",userName)
+          let otp = Math.floor(Math.random() * 999999) + 100000;
+          const subject = "Request To Change Your Password";
+          const body = "Hi "+userName+ "<br/>"+ 'this is your OTP for your forgot password +"<br>"'+otp;
+          let transporter = nodemailer.createTransport({
+            host: "111.93.169.90",
+            port: 27929,
+            secure: false, // true for 465, false for other ports
+            service: "gmail",
+            auth: {
+              user: config.HOST_EMAIL_1, // generated ethereal user
+              pass: config.HOST_EMAIL_PASSWORD_1 // generated ethereal password
+            }
+          });
+        //   console.log(req.body.email)
+          const mailOptions = {
+            to:email,
+            from: config.HOST_EMAIL_1,
+            subject: subject,
+            text:"Hi "+userName+",  <br/>This is your OTP to change your password <br>"+otp,
+            // text:'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
+            // 'Please click on the following link, or paste this into your browser to complete the process:\n\n' +
+            // 'reset/' + otp + '\n\n' +
+            // 'If you did not request this, please ignore this email and your password will remain unchanged.\n'
+          };
+          console.log(mailOptions)
+          transporter.sendMail(mailOptions, function (err, info) {
+            if (err) {
+              console.log(err);
+              return err
+            } else {
+              console.log('Email sent : ' + info.response);
+            //   return info.response;
+            res.status(200).send('recovery email sent');
+            }
+          })
+  
+  
+  
+          
+          // let sendMail = nodemailer.send({email,subject,body});
+          console.log(userDetails)
+          const updateUser = await User.findOneAndUpdate(
+            { _id: userDetails[0]._id },
+            { $set: { otp: otp } },
+            { new: true }
+          );
+          console.log(otp)
+          return response
+            .status(200)
+            .send({ ack: true, details: "OTP Send Successfully" });
+        }
+      } catch (error) {
+        console.log("error--------", error);
+        return response.status(500).send({ ack: false, details: error.message });
+      }
+    }
+  };
+
+
+
+  const updatePassword = async (request, response, next) => {
+    let email = request.body.email;
+    let password = request.body.password;
+    let otp=request.body.otp;  
+    if (request.body.email == null || request.body.otp == null) {
+      response.status(201).json({ ack: false, details: "parameter missing..." });
+    } else {
+      try {
+        const userDetails = await User
+          .find({ email: email, otp: otp, isDeleted: false });
+          console.log(userDetails)
+        if (userDetails.length == 0) {
+          return response
+            .status(201)
+            .json({ ack: false, details: "Otp is Not Matched" });
+        } else {
+          if (request.body.email == null || request.body.password == null||request.body.otp==null) {
+            response.status(201).json({ ack: false, details: "parameter missing..." });
+          } else {
+            try {
+              const userDetails = await User
+                .find({ email: email, isDeleted: false });
+              if (userDetails.length == 0) {
+                return response
+                  .status(201)
+                  .json({ ack: false, message: "Invalid email. Please try again" });
+              } else {
+                // console.log("in else");
+                let newPass = bcrypt.hashSync(password, salt);
+                // console.log("newPass", newPass)
+                await User.findOneAndUpdate(
+                  { _id: userDetails[0]._id },
+                  { $set: { password: newPass } }
+                );
+                // console.log(" dfjskjdslk");
+                return response
+                  .status(200)
+                  .json({ ack: true, details: "Password Change Successfully" });
+        
+              }
+            } catch (error) {
+              response.status(500).json({ ack: false, details: error.message });
+            }
+          }
+        }
+      } catch (error) {
+        response.status(500).json({ ack: false, details: error.message });
+      }
+    }
+  
+  };
+
+/**
+ * getProfile
+ * Get admin profile details
+ * return JSON
+ */
+const getProfile = async(req, res) => {
+    if(req.params.userId == null) {
+        return res.status(400).jsn({ack:false, msg:"Parameter missing !!!" });
 const socialLogin = async(request, response) => {
     const session = request.db_session;
     //console.log('request====',request.body);
@@ -239,6 +382,7 @@ const socialLogin = async(request, response) => {
 
 
 
+    }
 
-
-export default {signUp, activeAccount,login, socialLogin }
+} 
+export default { getProfile, updateProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin}
