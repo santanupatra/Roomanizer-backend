@@ -3,6 +3,7 @@ import user from './UserRoute';
 import chef from './ChefRoute';
 import cms from './CmsRoute';
 import setting from './SettingRoute'
+import contactUs from './ContactUsRoute'
 import Authentication from './AuthenticatonRoute';
 // intializing express router
 const router = express.Router();
@@ -15,6 +16,7 @@ router.use('/chef-api', chef);
 router.use('/auth-api', Authentication);
 router.use('/cms-api', cms);
 router.use('/setting-api', setting);
+router.use('/contactUs-api', contactUs);
 
 
 export default router;
