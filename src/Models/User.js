@@ -5,7 +5,7 @@ const schema = new Schema({
     // _id: {String},
     firstName: {
         type: String,
-        required: true
+        // required: true
     },
     lastName: {
         type: String
@@ -13,7 +13,10 @@ const schema = new Schema({
     name: {
         type: String
     },
-    
+    email: {
+        type: String,
+        required: true
+    },
     dateOfBirth: {
         type: String, 
     },                   

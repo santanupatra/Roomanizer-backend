@@ -31,7 +31,7 @@ const signUp = async(req, res) => {
                 if(addUser){
                     const to = req.body.email;
                     const subject = "Request To active chef Account";
-                    const url = config.WEB_URL+"active/"+ req.body.email;
+                    const url = config.WEB_URL+"activeAccount/"+ req.body.email;
                     console.log("url==",url);
                     var linkHref = "<a href='" +url+ "'>Click Here</a>";
                     const body = "Hi,<br/> <br/>Click this link to active your account <br>"+ linkHref  ;
@@ -60,13 +60,13 @@ const activeAccount = async(req,res)=>{
         return res.status(400).jsn({ ack:false, msg:"Parameter missing !!!" });
     }
     try {
-        const userDetails = await User.findById(
-            { email: req.params.email });
-        const updatechef = await User.findByIdAndUpdate(
-            { _id: userDetails._id },
+        const userDetails = await User.findOneAndUpdate(
+            { email: req.params.email },
             {
-                $set: {isEmailVerified:true,
-                        isActive:true}
+                $set: {
+                    isEmailVerified:true,
+                    isActive:true
+                }
             }
         );
         res.status(200).json({ack:true, data:userDetails});
