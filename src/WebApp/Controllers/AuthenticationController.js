@@ -167,8 +167,8 @@ const forgotPassword = async (request, response, next) => {
             secure: false, // true for 465, false for other ports
             service: "gmail",
             auth: {
-              user: config.HOST_EMAIL_1, // generated ethereal user
-              pass: config.HOST_EMAIL_PASSWORD_1 // generated ethereal password
+              user: config.HOST_EMAIL, // generated ethereal user
+              pass: config.HOST_EMAIL_PASSWORD // generated ethereal password
             }
           });
         //   console.log(req.body.email)
@@ -219,34 +219,36 @@ const forgotPassword = async (request, response, next) => {
 
 
   const updatePassword = async (request, response, next) => {
-    let email = request.body.email;
+    console.log(request.body)
+    // let email = request.body.email;
     let password = request.body.password;
     let otp=request.body.otp;  
-    if (request.body.email == null || request.body.otp == null) {
+    if ( request.body.otp == null) {
       response.status(201).json({ ack: false, details: "parameter missing..." });
     } else {
       try {
         const userDetails = await User
-          .find({ email: email, otp: otp, isDeleted: false });
+          .find({  otp: otp, isDeleted: false });
           console.log(userDetails)
         if (userDetails.length == 0) {
           return response
             .status(201)
             .json({ ack: false, details: "Otp is Not Matched" });
         } else {
-          if (request.body.email == null || request.body.password == null||request.body.otp==null) {
+          if ( request.body.password == null||request.body.otp==null) {
             response.status(201).json({ ack: false, details: "parameter missing..." });
           } else {
             try {
               const userDetails = await User
-                .find({ email: email, isDeleted: false });
+                .find({ otp: otp, isDeleted: false });
+                console.log(userDetails)
               if (userDetails.length == 0) {
                 return response
                   .status(201)
                   .json({ ack: false, message: "Invalid email. Please try again" });
               } else {
                 // console.log("in else");
-                let newPass = bcrypt.hashSync(password, salt);
+                let newPass = bcrypt.hashSync(password, 10);
                 // console.log("newPass", newPass)
                 await User.findOneAndUpdate(
                   { _id: userDetails[0]._id },
@@ -278,6 +280,8 @@ const forgotPassword = async (request, response, next) => {
 const getProfile = async(req, res) => {
     if(req.params.userId == null) {
         return res.status(400).jsn({ack:false, msg:"Parameter missing !!!" });
+    }
+}
 const socialLogin = async(request, response) => {
     const session = request.db_session;
     //console.log('request====',request.body);
@@ -379,10 +383,4 @@ const socialLogin = async(request, response) => {
           
     
   };
-
-
-
-    }
-
-} 
-export default { getProfile, updateProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin}
+export default { getProfile, forgotPassword,updatePassword,signUp, activeAccount,login,socialLogin}
