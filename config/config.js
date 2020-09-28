@@ -3,10 +3,8 @@ const defaultData = {
   EXPIRES_IN: '30d', // expires in 30 days
   SALT_ROUND: 10,
   JWT_ALGORITHM: 'HS256',
-  HOST_EMAIL: 'roomanizer',
-  HOST_EMAIL_PASSWORD: 'rooman1zer2020',
-  HOST_EMAIL_1: 'mail@cbnits.com',
-  HOST_EMAIL_PASSWORD_1: ' w#llcbn1ts',
+  HOST_EMAIL: 'mail@cbnits.com',
+  HOST_EMAIL_PASSWORD: 'w#llcbn1ts',
   OTP_EMAILTEMPLATE_PRIMARY_ID:'',
   SETTING_PRIMARY_ID:"5f5f3b308bbfe621e7b8b98e",
   WEB_URL: 'http://localhost:3000/',
