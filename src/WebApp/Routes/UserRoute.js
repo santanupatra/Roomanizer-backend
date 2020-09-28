@@ -5,6 +5,8 @@ import upload from '../../../config/FileUpload';
 // intializing express router
 const router = express.Router();
 
-router.post('/userSignUp', UserController.createUser);
+router.post('/chnagePassword', UserController.changePassword);
+router.get('/:userId', UserController.getProfile);
+
 
 export default router;

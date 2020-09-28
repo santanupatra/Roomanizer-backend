@@ -5,7 +5,7 @@ const schema = new Schema({
     // _id: {String},
     firstName: {
         type: String,
-        required: true
+        // required: true
     },
     lastName: {
         type: String
@@ -13,7 +13,10 @@ const schema = new Schema({
     name: {
         type: String
     },
-    
+    email: {
+        type: String,
+        required: true
+    },
     dateOfBirth: {
         type: String, 
     },                   
@@ -82,6 +85,16 @@ const schema = new Schema({
     AvarageRating: {
         type: Number
     },
+    socialId:{
+        type:String
+    },
+    socialMediaType: {
+        type:String
+    },
+    isSocialMediaUser:{
+        type:Boolean,
+        default:false
+    },
     isNotification: {
         type: Boolean,
         default: true
@@ -98,10 +111,6 @@ const schema = new Schema({
         type: Boolean, 
         default: false
     }, 
-    // isChefProfileComplete: {
-    //     type: Boolean, 
-    //     default: false
-    // },           
     createdDate: {
         type: Date, 
         default: Date.now

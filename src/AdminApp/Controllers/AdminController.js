@@ -190,14 +190,14 @@ const forgotPassword = async (request, response, next) => {
           secure: false, // true for 465, false for other ports
           service: "gmail",
           auth: {
-            user: config.HOST_EMAIL_1, // generated ethereal user
-            pass: config.HOST_EMAIL_PASSWORD_1 // generated ethereal password
+            user: config.HOST_EMAIL, // generated ethereal user
+            pass: config.HOST_EMAIL_PASSWORD // generated ethereal password
           }
         });
       //   console.log(req.body.email)
         const mailOptions = {
           to:email,
-          from: config.HOST_EMAIL_1,
+          from: config.HOST_EMAIL,
           subject: subject,
           text:"Hi "+userName+",  <br/>Click this link to active your account <br>"+otp,
           // text:'You are receiving this because you (or someone else) have requested the reset of the password for your account.\n\n' +
