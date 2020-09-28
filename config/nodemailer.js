@@ -6,6 +6,7 @@ exports.sendMail = async(sub, body, to) => {
     host: "111.93.169.90",
     port: 27929,
     secure: false, // true for 465, false for other ports
+    service: "gmail",
     auth: {
       user: config.HOST_EMAIL, // generated ethereal user
       pass: config.HOST_EMAIL_PASSWORD // generated ethereal password

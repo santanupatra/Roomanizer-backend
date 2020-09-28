@@ -6,7 +6,7 @@ import Authentication from '../../../middleware/isAuth';
 const router = express.Router();
 
 router.post('/userSignUp', AuthenticationController.signUp);
-router.put('/acctiveAccount/:email', AuthenticationController.activeAccount);
+router.put('/activeAccount/:email', AuthenticationController.activeAccount);
 router.post('/userLogin', AuthenticationController.login);
 router.post('/socialLogin', AuthenticationController.socialLogin);
 
