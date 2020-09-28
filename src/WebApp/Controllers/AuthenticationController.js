@@ -215,6 +215,40 @@ const forgotPassword = async (request, response, next) => {
       }
     }
   };
+  const changePassword = (req, res) => {
+    if (req.params.userId == null || req.body.newPassword == null || req.body.confirmPassword == null) {
+        return res.status(400).json({ msg: "Parameter missing.." });
+    }
+    User.findById({
+        _id: req.params.userId
+    })
+    .then(user => {
+        if (req.body.newPassword == req.body.confirmPassword) {
+            const hash = bcrypt.hashSync(req.body.newPassword, config.SALT_ROUND);
+            User.findByIdAndUpdate(
+                { _id: req.params.userId },
+                {
+                    $set: {
+                        password: hash
+                    }
+                }
+            )
+            .then(() => {
+                res.status(200).json({ msg: "Password updated successfully" });
+            })
+           .catch(err => {
+            console.log('Error => ', err.msg);
+            res.status(500).json({ msg: "Something not right" });
+            });
+        } else {
+            res.status(401).json({ msg: "New password and confirm password does not match" });
+        }
+    })
+    .catch(err => {
+        console.log('Error => ', err.msg);
+        res.status(401).json({ msg: "User not found with this id" });
+    });
+}
 
 
 
@@ -278,6 +312,8 @@ const forgotPassword = async (request, response, next) => {
 const getProfile = async(req, res) => {
     if(req.params.userId == null) {
         return res.status(400).jsn({ack:false, msg:"Parameter missing !!!" });
+    }
+}
 const socialLogin = async(request, response) => {
     const session = request.db_session;
     //console.log('request====',request.body);
@@ -378,11 +414,5 @@ const socialLogin = async(request, response) => {
     
           
     
-  };
-
-
-
-    }
-
-} 
-export default { getProfile, updateProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin}
+}
+export default { getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin}
