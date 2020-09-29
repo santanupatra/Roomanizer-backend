@@ -15,5 +15,5 @@ router.post('/userSignUp', AuthenticationController.signUp);
 router.put('/activeAccount/:email', AuthenticationController.activeAccount);
 router.post('/userLogin', AuthenticationController.login);
 router.post('/socialLogin', AuthenticationController.socialLogin);
-
+router.put('/changePassword/:userId', AuthenticationController.changePassword);
 export default router;
