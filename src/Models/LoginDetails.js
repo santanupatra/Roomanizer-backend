@@ -20,6 +20,10 @@ const schema = new Schema({
         type: Date,
         default: Date.now
     },
+    logoutTime: {
+        type: Date,
+        //default: Date.now
+    },
 
 
 
