@@ -415,4 +415,35 @@ const socialLogin = async(request, response) => {
           
     
 }
-export default { getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin}
+/*
+* User Login
+* return json
+*/
+const logOut = async(req, res) => {
+  if(req.params.userId == null) {
+      return res.status(400).json({msg:"Parameter missing..."});
+  }
+  console.log(req.params.userId)
+
+  try {
+      const city = await LoginDetails.findOneAndUpdate(
+          { userId: req.params.userId , type:"login"},
+          {
+              $set: {
+                //userId:req.params.userId,
+                type:"logout",
+                loginType:"web",
+                logoutTime :Date.now()
+                                
+                  
+              }
+          });
+      res.status(200).json({msg:"Successfully loggedOut"});
+  } catch (err) {
+      console.log('Error => ',err.message);
+      res.status(500).json({msg:"Something went wrong"});
+  }
+}
+  
+
+export default { getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut}
