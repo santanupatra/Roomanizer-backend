@@ -29,6 +29,10 @@ const schema = new Schema({
         type: Date,
         default: Date.now
     },
+    isDeleted: {
+        type: Boolean, 
+        default: false
+    },
 });
 // schema.index({ "location": "2dsphere" });
 const ContactUs = mongoose.model('contactUs', schema);

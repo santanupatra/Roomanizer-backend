@@ -3,6 +3,8 @@ import admin from './AdminRoute';
 import user from './UserRoute';
 import cms from './CmsRoute';
 import room from './RoomRoute';
+import contact from './ContactRoute';
+
 // import chef from './ChefRoute';
 import landlord from './LandlordRoute';
 import setting from './SettingRoute';
@@ -33,6 +35,8 @@ router.use('/email-api', email);
 // router.use('/food-api', food);
 // router.use('/service-api', service);
 router.use('/city-api', city);
+router.use('/contact-api', contact);
+
 // router.use('/province-api', province);
 // router.use('/dashboard-api', dashboard);
 
