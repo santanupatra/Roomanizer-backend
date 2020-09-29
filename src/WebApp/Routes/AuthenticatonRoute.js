@@ -16,4 +16,6 @@ router.put('/activeAccount/:email', AuthenticationController.activeAccount);
 router.post('/userLogin', AuthenticationController.login);
 router.post('/socialLogin', AuthenticationController.socialLogin);
 router.put('/changePassword/:userId', AuthenticationController.changePassword);
+router.put('/LogOut/:userId', AuthenticationController.logOut);
+
 export default router;
