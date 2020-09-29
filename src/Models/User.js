@@ -37,6 +37,15 @@ const schema = new Schema({
     aboutMe: {
         type: String
     },
+    maxBudget: {
+        type: String
+    },
+    readyToMove: {
+        type: String, 
+    },  
+    houseRules: {
+        type: String, 
+    },
     otp: {
         type: String
     },
