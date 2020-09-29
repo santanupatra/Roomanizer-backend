@@ -131,10 +131,7 @@ const login = (req, res) => {
       res.status(401).json({ msg: "Invalid email" });
     });
 }
-/*
-* Social Media Login
-* return json
-*/
+
 
 /**
  * forgotPassword
@@ -215,6 +212,12 @@ const forgotPassword = async (request, response, next) => {
     }
   }
 };
+
+/**
+ * changePassword
+ * return JSON
+ */
+
 const changePassword = (req, res) => {
   if (req.params.userId == null || req.body.newPassword == null || req.body.confirmPassword == null) {
     return res.status(400).json({ msg: "Parameter missing.." });
@@ -250,7 +253,10 @@ const changePassword = (req, res) => {
     });
 }
 
-
+/**
+ * update Password
+ * return JSON
+ */
 
 const updatePassword = async (request, response, next) => {
   console.log(request.body)
@@ -312,10 +318,25 @@ const updatePassword = async (request, response, next) => {
  * return JSON
  */
 const getProfile = async (req, res) => {
-  if (req.params.userId == null) {
-    return res.status(400).jsn({ ack: false, msg: "Parameter missing !!!" });
+  if(req.params.userId == null) {
+    return res.status(400).json({msg: "parameter missing.."});
+  }
+  try {
+    const user = await User.findById({
+      _id: req.params.userId
+  });
+  res.status(200).json({data: user});
+  } catch (err) {
+    console.log("Error => ",err.message);
+    res.status(500).json({msg:"Something went wrong."});
   }
 }
+
+/*
+* Social Media Login
+* return json
+*/
+
 const socialLogin = async (request, response) => {
   const session = request.db_session;
   //console.log('request====',request.body);
@@ -447,5 +468,39 @@ const logOut = async(req, res) => {
   }
 }
   
+/**
+ * updateUser
+ * return JSON
+ */
+const updateUser = async(req, res) => {
+  if(req.params.userId == null) {
+      return res.status(400).json({msg: "parameter missing.."});
+  }
+  try {
+      const user = await User.findById({
+          _id: req.params.userId
+      });
+      if(user){
+          const emailExist = await User.find({
+              email: req.body.email,
+              _id: { $ne: req.params.userId }
+          });
+          let allData = req.body;
+          const update = await User.findByIdAndUpdate(
+            { _id: req.params.userId },
+              {
+                $set: allData
+              }
+          );
+          res.status(200).json({ msg: "User Details has been updated" });
+      } else {
+          res.status(401).json({msg: "User Details not found with this id"});
+      }  
+  } catch (err) {
+      console.log("Error => ",err.message);
+      res.status(500).json({msg:"Something went wrong."});
+  }
+}
 
-export default { getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut}
+
+export default { getProfile, changePassword, updateUser, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut}
