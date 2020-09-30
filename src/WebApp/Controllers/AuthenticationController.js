@@ -416,7 +416,7 @@ const socialLogin = async(request, response) => {
     
 }
 /*
-* User Login
+* User Logout
 * return json
 */
 const logOut = async(req, res) => {
@@ -442,8 +442,51 @@ const logOut = async(req, res) => {
   } catch (err) {
       console.log('Error => ',err.message);
       res.status(500).json({msg:"Something went wrong"});
+
+  }
+}
+const profilePicture = async(req, res) => {
+  console.log(req.file)
+  if(req.params.userId == null || req.file == null) {
+    
+      return res.status(400).json({ msg:"Parameter missing !!!" });
+      
+  }
+  
+  try {
+     let allData = req.body;
+         
+        if (req.file) {
+           let allphoto = config.USER_IMAGE_PATH + req.file.filename
+           //const p = req.file.path.replace("/")
+              const updateAdmin = await User.findByIdAndUpdate(
+                { _id: req.params.userId },
+                  {
+                      $set: {
+                        profilePicture: allphoto
+                      }
+                  }
+              );
+              res.status(200).json({ msg: "Profile Picture updated successfully" });
+          } else{
+            const updateAdmin = await User.findByIdAndUpdate(
+              { _id: req.params.userId },
+              {
+                  $set: allData
+              }
+          );
+          res.status(200).json({ msg: "file not found" });
+            
+          }
+          
+          
+      }
+   
+   catch (err) {
+      console.log("Error => ",err.message);
+      res.status(500).json({ message:"Something went wrong" });
   }
 }
   
 
-export default { getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut}
+export default {getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut,profilePicture}
