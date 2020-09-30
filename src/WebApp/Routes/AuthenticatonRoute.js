@@ -17,5 +17,7 @@ router.post('/userLogin', AuthenticationController.login);
 router.post('/socialLogin', AuthenticationController.socialLogin);
 router.put('/changePassword/:userId', AuthenticationController.changePassword);
 router.put('/LogOut/:userId', AuthenticationController.logOut);
+router.put('/profilePicture/:userId', upload.uploadUserImage,AuthenticationController.profilePicture);
+
 router.put('/updateProfile/:userId', AuthenticationController.updateUser);
 export default router;
