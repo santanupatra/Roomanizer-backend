@@ -596,4 +596,26 @@ const listUsers = async(req, res) => {
   }
 }
 
-export default {getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut,profilePicture,updateUser,listUsers}
+/**
+ * listUser
+ * return JSON
+ */
+const listUser = async(req, res) => {
+  if(req.params.userId == null) {
+      return res.status(400).json({msg: "parameter missing.."});
+  }
+  try {
+      const user = await User.findById({
+          _id: req.params.userId
+      });
+      res.status(200).json({data: user});
+  } catch (err) {
+      console.log("Error => ",err.message);
+      res.status(500).json({msg:"Something went wrong."});
+  }
+}
+
+
+
+
+export default {getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut,profilePicture,updateUser,listUsers,listUser}
