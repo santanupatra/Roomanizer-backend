@@ -439,7 +439,7 @@ const socialLogin = async (request, response) => {
 
 }
 /*
-* User Login
+* User Logout
 * return json
 */
 const logOut = async(req, res) => {
@@ -465,6 +465,49 @@ const logOut = async(req, res) => {
   } catch (err) {
       console.log('Error => ',err.message);
       res.status(500).json({msg:"Something went wrong"});
+
+  }
+}
+const profilePicture = async(req, res) => {
+  console.log(req.file)
+  if(req.params.userId == null || req.file == null) {
+    
+      return res.status(400).json({ msg:"Parameter missing !!!" });
+      
+  }
+  
+  try {
+     let allData = req.body;
+         
+        if (req.file) {
+           let allphoto = config.USER_IMAGE_PATH + req.file.filename
+           //const p = req.file.path.replace("/")
+              const updateAdmin = await User.findByIdAndUpdate(
+                { _id: req.params.userId },
+                  {
+                      $set: {
+                        profilePicture: allphoto
+                      }
+                  }
+              );
+              res.status(200).json({ msg: "Profile Picture updated successfully" });
+          } else{
+            const updateAdmin = await User.findByIdAndUpdate(
+              { _id: req.params.userId },
+              {
+                  $set: allData
+              }
+          );
+          res.status(200).json({ msg: "file not found" });
+            
+          }
+          
+          
+      }
+   
+   catch (err) {
+      console.log("Error => ",err.message);
+      res.status(500).json({ message:"Something went wrong" });
   }
 }
   
@@ -502,5 +545,77 @@ const updateUser = async(req, res) => {
   }
 }
 
+/**
+ * listUsers
+ * return JSON
+ */
+const listUsers = async(req, res) => {
+  // if(req.query.keyword == null || req.query.page == null){
+  //     return res.status(400).send({ack:1, message:"Parameter missing..."})
+  // }
+  try {
+      let keyword = req.query.keyword;
+      let limit = 30;
+      let page = req.query.page;
+      var skip = (limit*page);
+      const list = await User.find({
+          isAdmin: false,
+          isDeleted: false,
+          userType: "customer",
+          $or: [
+              { address: { $regex: keyword, $options: 'm' } },
+              { age: { $regex: keyword, $options: 'm' } },
+              { gender: { $regex: keyword, $options: 'm' } },
+              { occupation: { $regex: keyword, $options: 'm' } }
 
-export default { getProfile, changePassword, updateUser, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut}
+
+          ]
+      })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdDate: 'DESC' });
+      const listAll = await User.find({
+          isAdmin: false,
+          isDeleted: false,
+          $or: [
+            { address: { $regex: keyword, $options: 'm' } },
+            { age: { $regex: keyword, $options: 'm' } },
+            { gender: { $regex: keyword, $options: 'm' } },
+            { occupation: { $regex: keyword, $options: 'm' } }
+          ]
+      }).countDocuments();
+      const AllData = {
+          'list': list,
+          'count': listAll,
+          'limit': limit
+      };
+      res.status(200).json({data: AllData});
+  } catch (err) {
+      console.log("Error => ",err.message);
+      res.status(500).json({msg:"Something went wrong."});
+  }
+}
+
+/**
+ * listUser
+ * return JSON
+ */
+const listUser = async(req, res) => {
+  if(req.params.userId == null) {
+      return res.status(400).json({msg: "parameter missing.."});
+  }
+  try {
+      const user = await User.findById({
+          _id: req.params.userId
+      });
+      res.status(200).json({data: user});
+  } catch (err) {
+      console.log("Error => ",err.message);
+      res.status(500).json({msg:"Something went wrong."});
+  }
+}
+
+
+
+
+export default {getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut,profilePicture,updateUser,listUsers,listUser}

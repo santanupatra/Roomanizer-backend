@@ -18,7 +18,7 @@ const schema = new Schema({
         required: true
     },
     dateOfBirth: {
-        type: String, 
+        type: String 
     },                   
     phoneNumber: {
         type: String
@@ -29,10 +29,16 @@ const schema = new Schema({
     gender: {
         type: String,
         enum: ['Male','Female','Other']
-    },                 
+    },              
+    occupation: {
+        type: String,
+    },
+    age: {
+        type: Number
+    },
     profilePicture: {
         type: String, 
-        default: "/image/user.png"
+        //default: "/image/user.png"
     },
     aboutMe: {
         type: String
@@ -41,10 +47,10 @@ const schema = new Schema({
         type: String
     },
     readyToMove: {
-        type: String, 
+        type: Date, 
     },  
     houseRules: {
-        type: String, 
+        type: [], 
     },
     otp: {
         type: String
