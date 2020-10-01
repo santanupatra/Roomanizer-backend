@@ -545,5 +545,55 @@ const updateUser = async(req, res) => {
   }
 }
 
+/**
+ * listUsers
+ * return JSON
+ */
+const listUsers = async(req, res) => {
+  // if(req.query.keyword == null || req.query.page == null){
+  //     return res.status(400).send({ack:1, message:"Parameter missing..."})
+  // }
+  try {
+      let keyword = req.query.keyword;
+      let limit = 30;
+      let page = req.query.page;
+      var skip = (limit*page);
+      const list = await User.find({
+          isAdmin: false,
+          isDeleted: false,
+          userType: "customer",
+          $or: [
+              { address: { $regex: keyword, $options: 'm' } },
+              { age: { $regex: keyword, $options: 'm' } },
+              { gender: { $regex: keyword, $options: 'm' } },
+              { occupation: { $regex: keyword, $options: 'm' } }
 
-export default {getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut,profilePicture,updateUser}
+
+          ]
+      })
+      .skip(skip)
+      .limit(limit)
+      .sort({ createdDate: 'DESC' });
+      const listAll = await User.find({
+          isAdmin: false,
+          isDeleted: false,
+          $or: [
+            { address: { $regex: keyword, $options: 'm' } },
+            { age: { $regex: keyword, $options: 'm' } },
+            { gender: { $regex: keyword, $options: 'm' } },
+            { occupation: { $regex: keyword, $options: 'm' } }
+          ]
+      }).countDocuments();
+      const AllData = {
+          'list': list,
+          'count': listAll,
+          'limit': limit
+      };
+      res.status(200).json({data: AllData});
+  } catch (err) {
+      console.log("Error => ",err.message);
+      res.status(500).json({msg:"Something went wrong."});
+  }
+}
+
+export default {getProfile, changePassword, forgotPassword,updatePassword,signUp, activeAccount,login, socialLogin,logOut,profilePicture,updateUser,listUsers}
