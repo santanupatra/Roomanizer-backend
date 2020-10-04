@@ -46,6 +46,7 @@ const listAminitiesies = async(req, res) => {
           
             $or: [
                 { name: { $regex: keyword, $options: 'm' } },
+                { email: { $regex: keyword, $options: 'm' } }
             ]
         })
         .skip(skip)
@@ -56,6 +57,7 @@ const listAminitiesies = async(req, res) => {
             isDeleted: false,
             $or: [
                 { name: { $regex: keyword, $options: 'm' } },
+                { email: { $regex: keyword, $options: 'm' } }
             ]
         }).countDocuments();
         const AllData = {
