@@ -564,7 +564,7 @@ const listUsers = async(req, res) => {
           userType: "customer",
           $or: [
               { address: { $regex: keyword, $options: 'm' } },
-              { age: { $regex: keyword, $options: 'm' } },
+             // { age: { $regex: keyword, $options: 'm' } },
               { gender: { $regex: keyword, $options: 'm' } },
               { occupation: { $regex: keyword, $options: 'm' } }
 
@@ -579,7 +579,7 @@ const listUsers = async(req, res) => {
           isDeleted: false,
           $or: [
             { address: { $regex: keyword, $options: 'm' } },
-            { age: { $regex: keyword, $options: 'm' } },
+           // { age: { $regex: keyword, $options: 'm' } },
             { gender: { $regex: keyword, $options: 'm' } },
             { occupation: { $regex: keyword, $options: 'm' } }
           ]
