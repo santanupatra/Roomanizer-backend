@@ -4,7 +4,8 @@ import user from './UserRoute';
 import cms from './CmsRoute';
 import room from './RoomRoute';
 import contact from './ContactRoute';
-
+import house from './HouseRoute'
+import aminities from './AminitiesRoute'
 // import chef from './ChefRoute';
 import landlord from './LandlordRoute';
 import setting from './SettingRoute';
@@ -14,7 +15,7 @@ import email from './EmailTemplateRoute';
 // import service from './ServiceRoute';
     import city from './CityRoute';
 // import province from './ProvinceRoute';
-// import dashboard from './DashboardRoute';
+import dashboard from './DashboardRoute';
 
 
 // intializing express router
@@ -29,7 +30,9 @@ router.use('/user-api', user);
 router.use('/room-api',room);
 router.use('/landlord-api', landlord);
 router.use('/cms-api', cms);
-router.use('/setting-api', setting);
+router.use('/setting-api', setting)
+router.use('/house-api', house)
+router.use('/aminities-api', aminities)
 // router.use('/cms-api', cms);
 router.use('/email-api', email);
 // router.use('/food-api', food);
@@ -38,7 +41,7 @@ router.use('/city-api', city);
 router.use('/contact-api', contact);
 
 // router.use('/province-api', province);
-// router.use('/dashboard-api', dashboard);
+router.use('/dashboard-api', dashboard);
 
 
 export default router;
