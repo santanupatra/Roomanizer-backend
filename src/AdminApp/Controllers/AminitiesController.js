@@ -32,12 +32,12 @@ const createAminities = async(req, res) => {
  * return JSON
  */
 const listAminitiesies = async(req, res) => {
-    // if(req.query.keyword == null || req.query.page == null){
-    //     return res.status(400).send({ack:1, message:"Parameter missing..."})
-    // }
+     if(req.query.keyword == null || req.query.page == null){
+         return res.status(400).send({ack:1, message:"Parameter missing..."})
+     }
     try {
         let keyword = req.query.keyword;
-        let limit = 30;
+        let limit = 10;
         let page = req.query.page;
         var skip = (limit*page);
         const list = await Aminities.find({
@@ -45,8 +45,7 @@ const listAminitiesies = async(req, res) => {
             isDeleted: false,
           
             $or: [
-                { name: { $regex: keyword, $options: 'm' } },
-                { email: { $regex: keyword, $options: 'm' } }
+                { name: { $regex: keyword, $options: 'm' } }
             ]
         })
         .skip(skip)
@@ -56,8 +55,7 @@ const listAminitiesies = async(req, res) => {
            
             isDeleted: false,
             $or: [
-                { name: { $regex: keyword, $options: 'm' } },
-                { email: { $regex: keyword, $options: 'm' } }
+                { name: { $regex: keyword, $options: 'm' } }
             ]
         }).countDocuments();
         const AllData = {
