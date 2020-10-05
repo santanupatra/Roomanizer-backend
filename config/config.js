@@ -7,7 +7,7 @@ const defaultData = {
   HOST_EMAIL_PASSWORD: 'w#llcbn1ts',
   OTP_EMAILTEMPLATE_PRIMARY_ID:'',
   SETTING_PRIMARY_ID:"5f5f3b308bbfe621e7b8b98e",
-  WEB_URL: 'http://localhost:3000/',
+  WEB_URL: 'http://111.93.169.90:7084/',
   DATABASE_URI: 'mongodb://roomanizer:rooman1zer2020@111.93.169.90:27929/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false',
   IMAGE_PATH: '/image/',
   USER_IMAGE_PATH: '/userImage/',
