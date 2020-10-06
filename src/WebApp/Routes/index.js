@@ -1,6 +1,6 @@
 import express from 'express';
 import user from './UserRoute';
-import chef from './ChefRoute';
+import landLord from './LandLordRoute';
 import cms from './CmsRoute';
 import setting from './SettingRoute'
 import contactUs from './ContactUsRoute'
@@ -12,7 +12,7 @@ router.use(express.json());
 
 // Routes starting with specific path...
 router.use('/user-api', user);
-router.use('/chef-api', chef);
+router.use('/landLord-api', landLord);
 router.use('/auth-api', Authentication);
 router.use('/cms-api', cms);
 router.use('/setting-api', setting);

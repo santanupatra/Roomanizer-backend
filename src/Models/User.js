@@ -52,6 +52,12 @@ const schema = new Schema({
     houseRules: {
         type: [], 
     },
+    aminities: {
+        type: [], 
+    },
+    noOfBedRoom: {
+        type: String, 
+    },
     otp: {
         type: String
     },
@@ -79,9 +85,7 @@ const schema = new Schema({
     city: {
         type: String
     },
-    province: {
-        type: String
-    },
+   
     address: {
         type: String
     },

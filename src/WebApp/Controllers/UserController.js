@@ -97,5 +97,33 @@ const getProfile = async(req, res) => {
         res.status(500).json({ msg: "Something went wrong" });
     };
 }
-
-export default {changePassword,getProfile}
+const updateUser = async(req, res) => {
+    if(req.params.userId == null) {
+        return res.status(400).json({msg: "parameter missing.."});
+    }
+    try {
+        const user = await User.findById({
+            _id: req.params.userId
+        });
+        if(user){
+            const emailExist = await User.find({
+                email: req.body.email,
+                _id: { $ne: req.params.userId }
+            });
+            let allData = req.body;
+            const update = await User.findByIdAndUpdate(
+              { _id: req.params.userId },
+                {
+                  $set: allData
+                }
+            );
+            res.status(200).json({ msg: "User Details has been updated" });
+        } else {
+            res.status(401).json({msg: "User Details not found with this id"});
+        }  
+    } catch (err) {
+        console.log("Error => ",err.message);
+        res.status(500).json({msg:"Something went wrong."});
+    }
+  }
+export default {changePassword,getProfile,updateUser}
