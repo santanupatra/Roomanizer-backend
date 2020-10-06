@@ -2,6 +2,8 @@
 import User from '../../Models/User';
 import config from '../../../config/config'
 import bcrypt from 'bcrypt';
+import House from '../../Models/House';
+var ObjectId = require('mongodb').ObjectID;
 
 /**
  * changePassword
@@ -127,3 +129,17 @@ const updateUser = async(req, res) => {
     }
   }
 export default {changePassword,getProfile,updateUser}
+
+const listHouses = async(req, res) => {
+    console.log("aaa")
+    try {
+        const city = await House.find({ isDeleted: false });
+        res.status(200).json({data:city});
+
+    } catch (err) {
+        console.log('Error => ',err.message);
+        res.status(500).json({msg:"Something went wrong"});
+    }
+}
+
+export default {changePassword,getProfile,listHouses}

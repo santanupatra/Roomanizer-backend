@@ -32,13 +32,53 @@ const createHouse = async(req, res) => {
  * return JSON
  */
 const listHouses = async(req, res) => {
-    try {
-        const city = await House.find({ isDeleted: false });
-        res.status(200).json({data:city});
-    } catch (err) {
-        console.log('Error => ',err.message);
-        res.status(500).json({msg:"Something went wrong"});
+    // try {
+    //     const city = await House.find({ isDeleted: false });
+    //     res.status(200).json({data:city});
+    // } catch (err) {
+    //     console.log('Error => ',err.message);
+    //     res.status(500).json({msg:"Something went wrong"});
+    // }
+
+
+    if(req.query.keyword == null || req.query.page == null){
+        return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
+   try {
+       let keyword = req.query.keyword;
+       let limit = 10;
+       let page = req.query.page;
+       var skip = (limit*page);
+       const list = await House.find({
+         
+           isDeleted: false,
+         
+           $or: [
+               { name: { $regex: keyword, $options: 'm' } }
+           ]
+       })
+       .skip(skip)
+       .limit(limit)
+       .sort({ createdDate: 'DESC' });
+       const listAll = await House.find({
+          
+           isDeleted: false,
+           $or: [
+               { name: { $regex: keyword, $options: 'm' } }
+           ]
+       }).countDocuments();
+       const AllData = {
+           'list': list,
+           'count': listAll,
+           'limit': limit
+       };
+       res.status(200).json({data: AllData});
+   } catch (err) {
+       console.log("Error => ",err.message);
+       res.status(500).json({msg:"Something went wrong."});
+   }
+
+
 }
 
 
