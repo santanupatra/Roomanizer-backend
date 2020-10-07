@@ -40,6 +40,10 @@ const schema = new Schema({
         type: String, 
         //default: "/image/user.png"
     },
+    roomPicture: {
+        type: String, 
+        //default: "/image/user.png"
+    },
     aboutMe: {
         type: String
     },
