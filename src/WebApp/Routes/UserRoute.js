@@ -5,9 +5,10 @@ import upload from '../../../config/FileUpload';
 // intializing express router
 const router = express.Router();
 
-router.post('/chnagePassword', UserController.changePassword);
-router.get('/:userId', UserController.getProfile);
-router.get('/house', UserController.listHouses);
+router.post('/chnagePassword', Authorization,UserController.changePassword);
+router.get('/:userId', Authorization,UserController.getProfile);
+router.put('/:userId', Authorization,UserController.updateUser);
+router.get('/house', Authorization,UserController.listHouses);
 
 
 

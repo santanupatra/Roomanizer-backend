@@ -10,6 +10,73 @@ const schema = new Schema({
     roomNo: {
         type: String
     },
+    roomImage:[{
+        image:{type: String},
+    }],
+    roomName: {
+        type: String
+    },
+    aboutRoom: {
+        type: String
+    },
+    flateMate: {
+        type: String,
+        enum:['female','male','other']
+    },
+    noOfBedRoom: {
+        type: String
+    },
+    houseRules: {
+        type: [], 
+    },
+    aminities: {
+        type: [], 
+    },
+    age: {
+        type: String, 
+    },
+    duration: {
+        type: String, 
+    },
+    moveIn: {
+        type: Date, 
+    },
+    area: {
+        type: Number
+    },
+    deposite: {
+        type: Number
+    },
+    charges: {
+        type: Number
+    },
+    chargesType: {
+        type: String,
+        enum:['monthly','yearly'],
+        default:'monthly'
+    },
+    budget: {
+        type: Number
+    },
+    address: {
+        type: String
+    },
+    city: {
+        type: String
+    },
+    longitude: {
+        type: Number
+    },
+    latitude: {
+        type: Number
+    },
+    location: {
+        type: { type: String, default: "Point" },
+        coordinates: [] //[<longitude>, <latitude>]
+    },
+    zipCode: {
+        type: String
+    },
     bathNo: {
         type: String
     },
@@ -27,15 +94,6 @@ const schema = new Schema({
     isFurniture: {
         type: Boolean,
         default: true
-    },
-    area: {
-        type: Number
-    },
-    address: {
-        type: String
-    },
-    city: {
-        type: String
     },
     createdDate: {
         type: Date,

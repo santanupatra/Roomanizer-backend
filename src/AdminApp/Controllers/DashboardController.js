@@ -19,10 +19,6 @@ const activeCount = async(req, res) => {
             isDeleted: false,
             isActive: true,
             userType: 'customer',
-            // $or: [
-            //     { name: { $regex: keyword, $options: 'm' } },
-            //     { email: { $regex: keyword, $options: 'm' } }
-            // ]
         }).countDocuments();
         const countLandloard = await User.find({
             isAdmin: false,
@@ -34,6 +30,7 @@ const activeCount = async(req, res) => {
             //     { email: { $regex: keyword, $options: 'm' } }
             // ]
         }).countDocuments();
+        // console.log(countLandloard)
         const AllCount = {
             'countUser': countUser,
             'countLandloard': countLandloard,
