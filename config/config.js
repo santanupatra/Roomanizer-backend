@@ -12,8 +12,8 @@ const defaultData = {
   IMAGE_PATH: '/image/',
   USER_IMAGE_PATH: '/userImage/',
   // SERVICE_IMAGE_PATH: '/serviceImage/',
-   LOGO_IMAGE_PATH: '/logo/',
-  // MEAL_IMAGE_PATH: '/MealImage/',
+  LOGO_IMAGE_PATH: '/logo/',
+  ROOM_IMAGE_PATH: '/roomImage/',
 }
 
 export default defaultData;
