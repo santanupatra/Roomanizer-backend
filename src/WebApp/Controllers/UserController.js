@@ -130,16 +130,6 @@ const updateUser = async(req, res) => {
   }
 
 
-const listHouses = async(req, res) => {
-    console.log("aaa")
-    try {
-        const city = await House.find({ isDeleted: false });
-        res.status(200).json({data:city});
 
-    } catch (err) {
-        console.log('Error => ',err.message);
-        res.status(500).json({msg:"Something went wrong"});
-    }
-}
 
-export default {changePassword,getProfile,updateUser,listHouses}
+export default {changePassword,getProfile,updateUser}

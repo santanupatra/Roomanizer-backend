@@ -4,6 +4,7 @@ import Room from '../../Models/Room';
 import config from '../../../config/config'
 import bcrypt from 'bcrypt';
 import nodeMailer from '../../../config/nodemailer'
+
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -11,11 +12,14 @@ const updateLandLord = async(req, res) => {
     if(req.params.landLordId == null) {
         return res.status(400).json({msg: "parameter missing.."});
     }
+    console.log(req.params.landLordId)
+
     try {
         const user = await User.findById({
             _id: req.params.landLordId
         });
         if(user){
+            console.log(req.body)
             let allData = req.body;
              let setUserData = {
                 firstName:allData.firstName,
@@ -24,10 +28,10 @@ const updateLandLord = async(req, res) => {
                 userType:'landlord'
              }
              let setRoomData = {
-                user_Id:user_Id,
+                user_Id:allData.user_Id,
                 roomName:allData.roomName,
                 aboutRoom:allData.aboutRoom,
-                flateMate:allData.flateMate,
+                flateMate:allData.flatmates,
                 noOfBedRoom:allData.noOfBedRoom,
                 houseRules:allData.houseRules,
                 aminities:allData.aminities,
@@ -40,6 +44,7 @@ const updateLandLord = async(req, res) => {
                 chargesType:allData.chargesType,
                 budget:allData.budget,
                 address:allData.address,
+                ageRange:allData.ageRange,
                 city:allData.city,
                 zipCode:allData.zipCode,
                 longitude:allData.longitude,
@@ -55,9 +60,12 @@ const updateLandLord = async(req, res) => {
                   $set: setUserData
                 }
             );
+            console.log(req.params.landLordId)
             const roomDetails = await Room.findOne({
+                
                 user_Id: ObjectId(req.params.landLordId)
             });
+            console.log(req.params.landLordId)
             if(roomDetails){
                 const roomUpdate = await Room.findByIdAndUpdate(
                     { _id: roomDetails._id },
@@ -130,5 +138,17 @@ const roomImageUpload = async(req, res) => {
         res.status(500).json({ msg: "Something went wrong" });
     }
 }
+const listroomDetails = async(req, res) => {
+    if(req.params.user_Id == null) {
+        return res.status(400).jsn({msg:"Parameter missing..."});
+    }
+    try {
+        const cmsData = await Room.findOne({ user_Id: req.params.user_Id });
+        res.status(200).json({data:cmsData});
+    } catch (err) {
+        console.log('Error => ',err.message);
+        res.status(500).json({msg:"Something went wrong"});
+    }
+}
 
-export default { updateLandLord,roomImageUpload }
+export default { updateLandLord,roomImageUpload,listroomDetails }
