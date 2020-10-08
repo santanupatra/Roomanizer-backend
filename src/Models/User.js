@@ -29,7 +29,8 @@ const schema = new Schema({
     gender: {
         type: String,
         enum: ['Male','Female','Other']
-    },              
+    },   
+             
     occupation: {
         type: String,
     },

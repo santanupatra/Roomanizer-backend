@@ -8,8 +8,5 @@ const router = express.Router();
 router.post('/chnagePassword', Authorization,UserController.changePassword);
 router.get('/:userId', Authorization,UserController.getProfile);
 router.put('/:userId', Authorization,UserController.updateUser);
-router.get('/house', Authorization,UserController.listHouses);
-
-
 
 export default router;

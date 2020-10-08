@@ -23,6 +23,9 @@ const schema = new Schema({
         type: String,
         enum:['female','male','other']
     },
+    ageRange: {
+        type: String, 
+    },
     noOfBedRoom: {
         type: String
     },

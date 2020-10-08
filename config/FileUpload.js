@@ -51,7 +51,7 @@ exports.uploadRoomImage = multer({
 //     }
 // }).single('mealImage');
 /*upload property picture*/
-const roomImageStore = multer.diskStorage({
+const roomImageStore2 = multer.diskStorage({
     destination: (req, file, cb) => {
        // console.log('request==',req);
         //console.log('file==',file);
@@ -61,8 +61,8 @@ const roomImageStore = multer.diskStorage({
         cb(null,file.fieldname + "-" + Date.now() + "-" + file.originalname);
     }
 });
-exports.uploadRoomImage = multer({
-    storage: roomImageStore,
+exports.uploadRoomImage2 = multer({
+    storage: roomImageStore2,
     limits: {
         fileSize: 70 * 1024 * 1024,  // 70 MB,
         files: 10
