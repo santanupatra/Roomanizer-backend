@@ -2,10 +2,6 @@
 import User from '../../Models/User';
 import Room from '../../Models/Room';
 import config from '../../../config/config'
-import bcrypt from 'bcrypt';
-import nodeMailer from '../../../config/nodemailer'
-import City from '../../Models/City'
-
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -140,7 +136,7 @@ const roomImageUpload = async(req, res) => {
     }
 }
 const listroomDetails = async(req, res) => {
-    if(req.params.user_Id == null) {
+    if(req.params.landLordId == null) {
         return res.status(400).jsn({msg:"Parameter missing..."});
     }
     try {
@@ -151,14 +147,6 @@ const listroomDetails = async(req, res) => {
         res.status(500).json({msg:"Something went wrong"});
     }
 }
-const listAllCity = async(req, res) => {
-    try {
-        const city = await City.find({ isDeleted: false });
-        res.status(200).json({data:city});
-    } catch (err) {
-        console.log('Error => ',err.message);
-        res.status(500).json({msg:"Something went wrong"});
-    }
-}
 
-export default { updateLandLord,roomImageUpload,listroomDetails,listAllCity }
+
+export default { updateLandLord,roomImageUpload,listroomDetails }
