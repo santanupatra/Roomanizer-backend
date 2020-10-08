@@ -128,8 +128,8 @@ const updateUser = async(req, res) => {
         res.status(500).json({msg:"Something went wrong."});
     }
   }
+
+
+
+
 export default {changePassword,getProfile,updateUser}
-
-
-
-
