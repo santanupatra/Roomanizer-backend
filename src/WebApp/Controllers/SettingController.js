@@ -16,7 +16,7 @@ const details = async(req, res) => {
 }
 const listAllCity = async(req, res) => {
     try {
-        const city = await City.find({ isDeleted: false });
+        const city = await City.find({ isDeleted: false,isActive:true });
         res.status(200).json({data:city});
     } catch (err) {
         console.log('Error => ',err.message);
