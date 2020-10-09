@@ -1,6 +1,7 @@
 import config from '../../../config/config';
 import Setting from '../../Models/Setting';
-import City from '../../Models/City'
+import City from '../../Models/City';
+import Aminities from '../../Models/Aminities'
 
 const details = async(req, res) => {
     try {
@@ -15,11 +16,20 @@ const details = async(req, res) => {
 }
 const listAllCity = async(req, res) => {
     try {
-        const city = await City.find({ isDeleted: false });
+        const city = await City.find({ isDeleted: false,isActive:true });
         res.status(200).json({data:city});
     } catch (err) {
         console.log('Error => ',err.message);
         res.status(500).json({msg:"Something went wrong"});
     }
 }
-export default { details ,listAllCity}
+const listAllAminities = async(req, res) => {
+    try {
+        const AminitiesList = await Aminities.find({ isDeleted: false, isActive:true });
+        res.status(200).json({data:AminitiesList});
+    } catch (err) {
+        console.log('Error => ',err.message);
+        res.status(500).json({msg:"Something went wrong"});
+    }
+}
+export default { details ,listAllCity,listAllAminities}
