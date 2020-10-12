@@ -39,11 +39,11 @@ const schema = new Schema({
     },
     profilePicture: {
         type: String, 
-        //default: "/image/user.png"
+        default: "/image/user.png"
     },
     roomPicture: {
         type: String, 
-        //default: "/image/user.png"
+        default: "/image/user.png"
     },
     aboutMe: {
         type: String

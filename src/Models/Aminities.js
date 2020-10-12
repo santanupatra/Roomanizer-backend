@@ -13,6 +13,10 @@ const schema = new Schema({
         type: Boolean, 
         default: false
     }, 
+    aminitiesImage:{
+        type: String, 
+        //default: "/image/user.png"
+    },
     createdDate: {
         type: Date, 
         default: Date.now
