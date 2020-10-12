@@ -168,6 +168,7 @@ const allUserList = async(req, res) => {
     let limit = 30;
     let page = req.query.page;
     var skip = (limit*page);
+    console.log("keyword",keyword,skip);
       
     let city
     if (keyword.city) {
@@ -204,17 +205,15 @@ const allUserList = async(req, res) => {
       } else {
         location = '';
       }
+      console.log("filterData",filterData);
+
     try {
         
-        const list = await User.aggregate([
-            {
-                $match: filterData
-            }
-            
-        ])
+        const list = await User.find(filterData)
         .skip(skip)
         .limit(limit)
         .sort({ createdDate: 'DESC' });
+        console.log("list",list);
         const count = await User.find(filterData).countDocuments();
         const result = {
             'list': list,
