@@ -96,6 +96,9 @@ const roomImageUpload = async(req, res) => {
     if(req.params.landLordId == null) {
         return res.status(400).jsn({ ack:false, msg:"Parameter missing !!!" });
     }
+    console.log(req.params.landLordId)
+    console.log("req.files",req.files)
+
     try {
         const userDetails = await User.findById({_id:req.params.landLordId});
         let updateData = await User.findByIdAndUpdate(
@@ -116,8 +119,9 @@ const roomImageUpload = async(req, res) => {
             user_Id:req.params.landLordId,
             roomImage:total_image
         }
-        
-          const userExit = await Room.findOne({user_Id:mongoose.Types.ObjectId(req.params.chefId)});
+          const userExit = await Room.findOne({user_Id:mongoose.Types.ObjectId(req.params.landLordId)});
+          console.log('userExit',userExit);
+
              let updatechef;
             if(userExit){
                  updatechef = await Room.findByIdAndUpdate(
@@ -143,8 +147,8 @@ const listroomDetails = async(req, res) => {
         return res.status(400).jsn({msg:"Parameter missing..."});
     }
     try {
-        const cmsData = await Room.findOne({ user_Id: req.params.landLordId });
-        res.status(200).json({data:cmsData});
+        const details = await Room.findOne({ user_Id: req.params.landLordId });
+        res.status(200).json({data:details});
     } catch (err) {
         console.log('Error => ',err.message);
         res.status(500).json({msg:"Something went wrong"});
