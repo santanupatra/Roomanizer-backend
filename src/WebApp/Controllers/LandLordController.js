@@ -140,7 +140,7 @@ const listroomDetails = async(req, res) => {
         return res.status(400).jsn({msg:"Parameter missing..."});
     }
     try {
-        const cmsData = await Room.findOne({ user_Id: req.params.user_Id });
+        const cmsData = await Room.findOne({ user_Id: req.params.landLordId });
         res.status(200).json({data:cmsData});
     } catch (err) {
         console.log('Error => ',err.message);

@@ -12,6 +12,7 @@ const defaultData = {
   IMAGE_PATH: '/image/',
   USER_IMAGE_PATH: '/userImage/',
   ROOM_IMAGE_PATH: '/roomImage/',
+  AMINITIES_IMAGE_PATH:'/aminitiesImage/',
 
   // SERVICE_IMAGE_PATH: '/serviceImage/',
   LOGO_IMAGE_PATH: '/logo/',

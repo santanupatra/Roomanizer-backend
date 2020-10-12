@@ -1,12 +1,14 @@
 import bcrypt from 'bcrypt';
 import Aminities from '../../Models/Aminities';
+import config from '../../../config/config';
+
 
 /**
  * createAminities
  * return JSON
  */
 const createAminities = async(req, res) => {
-    if(req.body.name == null) {
+    if(req.body.name == null ) {
         return res.status(400).json({ msg:"Parameter missing..." })
     }
     try {
@@ -17,6 +19,7 @@ const createAminities = async(req, res) => {
         } else {
             console.log("else")
             const allData = req.body
+            allData.aminitiesImage = config.AMINITIES_IMAGE_PATH + req.file.filename
             const addCity = await new Aminities(allData).save();
             res.status(200).json({msg:"Aminities Name has been added Successfully."});
             console.log("done")
@@ -79,11 +82,12 @@ const listAminities = async(req, res) => {
     if(req.params.aminitiesId == null) {
         return res.status(400).json({msg: "parameter missing.."});
     }
+    console.log(req.params.aminitiesId)
     try {
         const aminities = await Aminities.findById({
             _id: req.params.aminitiesId
         });
-        res.status(200).json({data: Aminities});
+        res.status(200).json({data: aminities});
     } catch (err) {
         console.log("Error => ",err.message);
         res.status(500).json({msg:"Something went wrong."});
@@ -106,11 +110,13 @@ const updateAminities = async(req, res) => {
             const emailExist = await Aminities.find({
                 _id: { $ne: req.params.aminitiesId }
             });
-            if(emailExist.length > 0){
+            if(false){
                 res.status(401).json({msg:"Email already exist"});
-            } else {
+            } 
+            else {
                 let allData = req.body;
-                if (req.body) {
+                if (req.file) {
+                    allData.aminitiesImage = config.AMINITIES_IMAGE_PATH + req.file.filename
                         const update = await Aminities.findByIdAndUpdate(
                         { _id: req.params.aminitiesId },
                         {
