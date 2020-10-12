@@ -21,6 +21,9 @@ const updateLandLord = async(req, res) => {
              let setUserData = {
                 firstName:allData.firstName,
                 lastName:allData.lastName,
+                socialId:allData.socialId,
+                dateOfBirth:allData.dateOfBirth,
+                age:allData.age,
                 name:allData.lastName?allData.firstName+' '+allData.lastName:allData.firstName,
                 userType:'landlord'
              }
@@ -28,7 +31,7 @@ const updateLandLord = async(req, res) => {
                 user_Id:allData.user_Id,
                 roomName:allData.roomName,
                 aboutRoom:allData.aboutRoom,
-                flateMate:allData.flatmates,
+                flateMate:allData.flateMate,
                 noOfBedRoom:allData.noOfBedRoom,
                 houseRules:allData.houseRules,
                 aminities:allData.aminities,
