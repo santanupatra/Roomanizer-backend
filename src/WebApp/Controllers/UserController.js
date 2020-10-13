@@ -1,5 +1,6 @@
 
 import User from '../../Models/User';
+import Room from '../../Models/Room';
 import config from '../../../config/config'
 import bcrypt from 'bcrypt';
 import House from '../../Models/House';
@@ -142,6 +143,18 @@ const updateUser = async(req, res) => {
                   $set: allData
                 }
             );
+            const roomExit = await Room.findOne({
+                  user_Id:req.params.userId
+            })
+            if(req.body.userType =='customer' && roomExit){
+              const update = await Room.findByIdAndUpdate(
+                { _id: roomExit._id },
+                  {
+                    $set: {isActive:false}
+                  }
+              );
+            }
+            
             res.status(200).json({ msg: "User Details has been updated" });
         } else {
             res.status(401).json({msg: "User Details not found with this id"});
@@ -156,60 +169,67 @@ const updateUser = async(req, res) => {
  * return JSON
  */
 const allUserList = async(req, res) => {
-    if(req.query.page == null){
+    if(req.query.page == null || req.query.perpage==null){
         return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
-    let filterData = {
-        isAdmin: false,
-        isDeleted: false,
-        userType: "customer",
-    }
+    
     let keyword = req.query;
-    let limit = 30;
+    let limit = parseInt(req.query.perpage);
     let page = req.query.page;
     var skip = (limit*page);
-    console.log("keyword",keyword,skip);
-      
+    let filterData = {}
+  
+    if(keyword.houseRules && keyword.houseRules.length > 0){
+      var rulesArr = keyword.houseRules.split(',');
+      filterData = {
+          'houseRules.value' :  { $in : rulesArr }
+      }
+    }
+    if(keyword.animities && keyword.animities.length > 0){
+      var animitiesArr = keyword.animities.split(',');
+      filterData = {
+          'animities.value' :  { $in : animitiesArr }
+      }
+    }
+    let bedrooms
+    if(keyword.bedrooms){
+        bedrooms = keyword.bedrooms;
+        filterData.noOfBedRoom = bedrooms;
+    }
     let city
     if (keyword.city) {
         city = keyword.city;
         filterData.city = { $regex: city, $options: 'i' };
-    } else {
-        city = '';
-    }
+    } 
     let occupation
     if (keyword.occupation) {
         occupation = keyword.occupation;
         filterData.occupation = occupation;
-      } else {
-        occupation = '';
       }
       let age
       if (keyword.age) {
-        age = keyword.age;
+        age = parseInt(keyword.age);
         filterData.age = age;
-      } else {
-        age = '';
-      }
+      } 
       let gender
       if (keyword.gender) {
         gender = keyword.gender;
         filterData.gender = gender;
-      } else {
-        gender = '';
-      }
+      } 
       let location
       if (keyword.location) {
-        location = keyword.location;
+        location = keyword.location.replace("%20", "");
         filterData.address = location;
-      } else {
-        location = '';
-      }
-      console.log("filterData",filterData);
+      } 
+      filterData.isAdmin =false;
+      filterData.isDeleted =false;
+      filterData.userType ="customer";
 
     try {
         
         const list = await User.find(filterData)
+       
+
         .skip(skip)
         .limit(limit)
         .sort({ createdDate: 'DESC' });
@@ -227,6 +247,7 @@ const allUserList = async(req, res) => {
         res.status(500).json({msg:"Something went wrong."});
     }
   }
+
 
   const profilePicture = async(req, res) => {
     console.log(req.file)
