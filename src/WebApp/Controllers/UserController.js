@@ -155,176 +155,108 @@ const updateUser = async(req, res) => {
  * listUsers
  * return JSON
  */
-// const allUserList = async(req, res) => {
-//     if(req.query.page == null){
-//         return res.status(400).send({ack:1, message:"Parameter missing..."})
-//     }
-//     let filterData = {
-//         isAdmin: false,
-//         isDeleted: false,
-//         userType: "customer",
-//     }
-//     let keyword = req.query;
-//     let limit = 30;
-//     let page = req.query.page;
-//     var skip = (limit*page);
-//     console.log("keyword",keyword,skip);
-      
-//     let city
-//     if (keyword.city) {
-//         city = keyword.city;
-//         filterData.city = { $regex: city, $options: 'i' };
-//     } else {
-//         city = '';
-//     }
-//     let occupation
-//     if (keyword.occupation) {
-//         occupation = keyword.occupation;
-//         filterData.occupation = occupation;
-//       } else {
-//         occupation = '';
-//       }
-//       let age
-//       if (keyword.age) {
-//         age = keyword.age;
-//         filterData.age = age;
-//       } else {
-//         age = '';
-//       }
-//       let gender
-//       if (keyword.gender) {
-//         gender = keyword.gender;
-//         filterData.gender = gender;
-//       } else {
-//         gender = '';
-//       }
-//       let location
-//       if (keyword.location) {
-//         location = keyword.location;
-//         filterData.address = location;
-//       } else {
-//         location = '';
-//       }
-//       // let animities
-//       // if (keyword.animities) {
-//       //   animities = keyword.animities;
-//       //   filterData.animities = animities;
-//       // } else {
-//       //   animities = '';
-//       // }
-//       // let houseRules
-//       // if (keyword.houseRules) {
-//       //    var rulesArr = keyword.houseRules.split(',');
-//       // //   console.log(rulesArr,"nameArr")
-//       //   var rulesData=[];
-//       //   Promise.all(rulesArr.map(value => {
-//       //     console.log(rulesData,"value")
-
-//       //   filterData ={'houseRules.label' : value}
-//       //   }))
-//       //  console.log(rulesData,"rulesData")
-
-//       //   //houseRules = keyword.houseRules;
-//       //   //filterData ={'houseRules.label' : rulesArr}
-//       // } else {
-//       //   houseRules = '';
-//       // }
-      
-//       console.log("filterData",filterData);
-
-//     try {
-        
-//         const list = await User.find(filterData)
-//         .skip(skip)
-//         .limit(limit)
-//         .sort({ createdDate: 'DESC' });
-//         console.log("list",list);
-//         const count = await User.find({filterData}).countDocuments();
-//         const result = {
-//             'list': list,
-//             'count': count,
-//             'limit': limit
-//         };
-//         res.status(200).json({ data: result});
-        
-//     } catch (err) {
-//         console.log("Error => ",err.message);
-//         res.status(500).json({msg:"Something went wrong."});
-//     }
-//   }
 const allUserList = async(req, res) => {
-  if(req.query.page == null){
-      return res.status(400).send({ack:1, message:"Parameter missing..."})
-  }
-  let filterData = {
-      isAdmin: false,
-      isDeleted: false,
-      userType: "customer",
-  }
-  let keyword = req.query;
-  let limit = 2;
-  let page = req.query.page;
-  var skip = (limit*page);
-  console.log("keyword",keyword,skip);
+    if(req.query.page == null){
+        return res.status(400).send({ack:1, message:"Parameter missing..."})
+    }
     
-  let city
-  if (keyword.city) {
-      city = keyword.city;
-      filterData.city = { $regex: city, $options: 'i' };
-  } else {
-      city = '';
+    let keyword = req.query;
+    let limit = req.query.perpage;
+    let page = req.query.page;
+    var skip = (limit*page);
+    //console.log("keyword",keyword,skip);
+    // let houseRules1
+    // if (keyword.houseRules) {
+    //    var rulesArr = keyword.houseRules.split(',');
+    //    houseRules1 ={'houseRules.label' :  { $in : rulesArr }}
+    //    console.log({houseRules1})
+    // } else {
+    //   houseRules1 = '';
+    //   rulesArr=[]
+    // }
+    
+  let filterData = {
+      // 'isAdmin': false,
+      // 'isDeleted': false,
+      // 'userType': "customer",
+      //'houseRules.label' :  { $in : rulesArr }
   }
-  let occupation
-  if (keyword.occupation) {
-      occupation = keyword.occupation;
-      filterData.occupation = occupation;
-    } else {
-      occupation = '';
-    }
-    let age
-    if (keyword.age) {
-      age = keyword.age;
-      filterData.age = age;
-    } else {
-      age = '';
-    }
-    let gender
-    if (keyword.gender) {
-      gender = keyword.gender;
-      filterData.gender = gender;
-    } else {
-      gender = '';
-    }
-    let location
-    if (keyword.location) {
-      location = keyword.location;
-      filterData.address = location;
-    } else {
-      location = '';
-    }
-    console.log("filterData",filterData);
-
-  try {
-      
-      const list = await User.find(filterData)
-      .skip(skip)
-
-      .limit(limit)
-      .sort({ createdDate: 'DESC' });
-      console.log("list",list);
-      const count = await User.find(filterData).countDocuments();
-      const result = {
-          'list': list,
-          'count': count,
-          'limit': limit
-      };
-      res.status(200).json({ data: result});
-      
-  } catch (err) {
-      console.log("Error => ",err.message);
-      res.status(500).json({msg:"Something went wrong."});
+  
+  if(keyword.houseRules.length>0){
+    var rulesArr = keyword.houseRules.split(',');
+     filterData = {
+        'houseRules.label' :  { $in : rulesArr }
+     }
   }
-}
+    let city
+    if (keyword.city) {
+        city = keyword.city;
+        filterData.city = { $regex: city, $options: 'i' };
+    } 
+    let occupation
+    if (keyword.occupation) {
+        occupation = keyword.occupation;
+        filterData.occupation = occupation;
+      }
+      let age
+      if (keyword.age) {
+        age = keyword.age;
+        filterData.age = age;
+      } 
+      let gender
+      if (keyword.gender) {
+        gender = keyword.gender;
+        filterData.gender = gender;
+      } 
+      let location
+      if (keyword.location) {
+        location = keyword.location;
+        filterData.address = location;
+      } 
+      //console.log('prev',filterData);
+
+      // let animities
+      // if (keyword.animities) {
+      //   var animitiesArr = keyword.animities.split(',');
+      //    filterData ={'aminities.label' :  { $in : animitiesArr },filterData}
+      // } else {
+      //   animities = '';
+      // }
+      // let houseRules
+      // if (keyword.houseRules) {
+      //    var rulesArr = keyword.houseRules.split(',');
+      //    filterData ={'houseRules.label' :  { $in : rulesArr },filterData}
+      // } else {
+      //   houseRules = '';
+      // }
+      filterData.isAdmin =false;
+      filterData.isDeleted =false;
+      filterData.userType ="customer";
+      //console.log("filterData",filterData);
+
+    try {
+        
+        const list = await User.find(filterData)
+       
+
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdDate: 'DESC' });
+        console.log("list",list);
+        const count = await User.find(filterData).countDocuments();
+        const result = {
+            'list': list,
+            'count': count,
+            'limit': limit
+        };
+        res.status(200).json({ data: result});
+        
+    } catch (err) {
+        console.log("Error => ",err.message);
+        res.status(500).json({msg:"Something went wrong."});
+    }
+  }
+
 
   const profilePicture = async(req, res) => {
     console.log(req.file)
