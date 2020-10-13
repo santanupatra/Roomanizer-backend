@@ -161,28 +161,14 @@ const allUserList = async(req, res) => {
     }
     
     let keyword = req.query;
-    let limit = req.query.perpage;
+    let limit = parseInt(req.query.perpage);
     let page = req.query.page;
     var skip = (limit*page);
-    //console.log("keyword",keyword,skip);
-    // let houseRules1
-    // if (keyword.houseRules) {
-    //    var rulesArr = keyword.houseRules.split(',');
-    //    houseRules1 ={'houseRules.label' :  { $in : rulesArr }}
-    //    console.log({houseRules1})
-    // } else {
-    //   houseRules1 = '';
-    //   rulesArr=[]
-    // }
     
-  let filterData = {
-      // 'isAdmin': false,
-      // 'isDeleted': false,
-      // 'userType': "customer",
-      //'houseRules.label' :  { $in : rulesArr }
-  }
+    
+  let filterData = {}
   
-  if(keyword.houseRules.length>0){
+  if(keyword.houseRules && keyword.houseRules.length>0){
     var rulesArr = keyword.houseRules.split(',');
      filterData = {
         'houseRules.label' :  { $in : rulesArr }
