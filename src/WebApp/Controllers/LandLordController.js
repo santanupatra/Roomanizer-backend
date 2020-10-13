@@ -154,6 +154,96 @@ const listroomDetails = async(req, res) => {
         res.status(500).json({msg:"Something went wrong"});
     }
 }
+const allroomList = async(req, res) => {
+    if(req.query.page == null || req.query.perpage==null){
+        return res.status(400).send({ack:1, message:"Parameter missing..."})
+    }
+    
+    let keyword = req.query;
+    let limit = parseInt(req.query.perpage);
+    let page = req.query.page;
+    var skip = (limit*page);
+    let filterData = {}
+  
+    if(keyword.houseRules && keyword.houseRules.length > 0){
+      var rulesArr = keyword.houseRules.split(',');
+      filterData = {
+          'houseRules.label' :  { $in : rulesArr }
+      }
+    }
+    if(keyword.animities && keyword.animities.length > 0){
+      var animitiesArr = keyword.animities.split(',');
+      filterData = {
+          'animities.label' :  { $in : animitiesArr }
+      }
+    }
+    let noOfBedRoom
+    if(keyword.noOfBedRoom){
+        noOfBedRoom = keyword.noOfBedRoom;
+        filterData.noOfBedRoom = noOfBedRoom;
+    }
+    let city
+    if (keyword.city) {
+        city = keyword.city;
+        filterData.city = { $regex: city, $options: 'i' };
+    } 
+    let location
+    if (keyword.location) {
+      location = keyword.location;
+      filterData.address = location;
+    } 
+    let moveIn
+    if (keyword.moveIn) {
+        moveIn = keyword.moveIn;
+        filterData.moveIn = moveIn;
+      }
+      let ageRange
+      if (keyword.ageRange) {
+        ageRange = keyword.ageRange;
+        filterData.ageRange = ageRange;
+      } 
+      let duration
+      if (keyword.duration) {
+        duration = keyword.duration;
+        filterData.duration = duration;
+      } 
+      let budget
+      if (keyword.budget) {
+        budget = keyword.budget;
+        filterData.budget = budget;
+      } 
+      let flateMate
+      if (keyword.flateMate) {
+        flateMate = keyword.flateMate;
+        filterData.flateMate = flateMate;
+      }
+      filterData.isActive =true;
+      filterData.isDeleted =false;
+      
 
+    try {
+        
+        const list = await Room.find(filterData)
+        .populate({
+            path: "user",
+            model: "user"
+          })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdDate: 'DESC' });
+        console.log("list",list);
+        const count = await Room.find(filterData).countDocuments();
+        const result = {
+            'list': list,
+            'count': count,
+            'limit': limit
+        };
+        res.status(200).json({ data: result});
+        
+    } catch (err) {
+        console.log("Error => ",err.message);
+        res.status(500).json({msg:"Something went wrong."});
+    }
+  }
 
-export default { updateLandLord,roomImageUpload,listroomDetails }
+export default { updateLandLord,roomImageUpload,listroomDetails,allroomList}
