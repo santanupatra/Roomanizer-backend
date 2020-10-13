@@ -69,7 +69,7 @@ const schema = new Schema({
     otptime:{
         type:String
     },
-    longitude: {
+    longitude:{
         type: Number
     },
     latitude: {
@@ -126,6 +126,24 @@ const schema = new Schema({
     isEmailVerified: {
         type: Boolean, 
         default: false
+    },
+    // socialMediaId:{
+    //     type:[]
+    // },
+    // socialMediaLink:{
+    //     //  type:[]
+    //     facebookLink:'',
+    //     twitterLink:'',
+    //     gsuiteLink:'',
+    //   },
+    facebookLink:{
+        type: String
+    },
+    twitterLink:{
+        type: String
+    },
+    gsuiteLink:{
+        type: String
     },
     isActive: {
         type: Boolean, 

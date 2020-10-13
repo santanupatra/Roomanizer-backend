@@ -21,7 +21,10 @@ const updateLandLord = async(req, res) => {
              let setUserData = {
                 firstName:allData.firstName,
                 lastName:allData.lastName,
-                socialId:allData.socialId,
+                //socialMediaLink:allData.socialMediaLink,
+                facebookLink:allData.facebookLink,
+                twitterLink:allData.twitterLink,
+                gsuiteLink:allData.gsuiteLink,
                 dateOfBirth:allData.dateOfBirth,
                 age:allData.age,
                 name:allData.lastName?allData.firstName+' '+allData.lastName:allData.firstName,
