@@ -153,6 +153,13 @@ const updateUser = async(req, res) => {
                     $set: {isActive:false}
                   }
               );
+            }else if (req.body.userType =='landlord' && roomExit){
+                const update = await Room.findByIdAndUpdate(
+                  { _id: roomExit._id },
+                    {
+                      $set: {isActive:true}
+                    }
+                );
             }
             
             res.status(200).json({ msg: "User Details has been updated" });
