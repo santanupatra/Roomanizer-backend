@@ -169,13 +169,12 @@ const updateUser = async(req, res) => {
  * return JSON
  */
 const allUserList = async(req, res) => {
-    // if(req.query.page == null || req.query.perpage==null){
-    //     return res.status(400).send({ack:1, message:"Parameter missing..."})
-    // }
+    if(req.query.page == null || req.query.perpage==null){
+        return res.status(400).send({ack:1, message:"Parameter missing..."})
+    }
     
     let keyword = req.query;
-    //let limit = parseInt(req.query.perpage);
-    let limit = 10;
+    let limit = parseInt(req.query.perpage);
     let page = req.query.page;
     var skip = (limit*page);
     let filterData = {}
