@@ -1,5 +1,6 @@
 import multer from 'multer';
 import config from '../config/config';
+import Aminities from '../src/Models/Aminities';
 
 /*upload user profile picture*/
 const userImageStore = multer.diskStorage({
@@ -18,22 +19,23 @@ exports.uploadUserImage = multer({
     }
 }).single('profilePicture');
 
-/*upload meal images*/
-// const mealImageStore = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, __basedir+"/uploads" + config.MEAL_IMAGE_PATH)
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null,file.fieldname + "-" + Date.now() + "-" + file.originalname);
-//     }
-// });
-// exports.uploadMealImage = multer({
-//     storage: mealImageStore,
-//     limits: {
-//         fileSize: 70 * 1024 * 1024,  // 70 MB,
-//         files: 1
-//     }
-// }).single('mealImage');
+// Aminities image
+const aminitiesImageStore = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, __basedir+"/uploads" + config.AMINITIES_IMAGE_PATH)
+    },
+    filename: (req, file, cb) => {
+        cb(null,file.fieldname + "-" + Date.now() + "-" + file.originalname);
+    } 
+});
+exports.uploadAminitiesImage = multer({
+    storage: aminitiesImageStore,
+    limits: {
+        fileSize: 70 * 1024 * 1024,  // 70 MB,
+        files: 1
+    }
+}).single('aminitiesImage');
+
 /*upload property picture*/
 const roomImageStore = multer.diskStorage({
     destination: (req, file, cb) => {

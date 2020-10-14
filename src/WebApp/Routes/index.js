@@ -6,6 +6,7 @@ import setting from './SettingRoute'
 import contactUs from './ContactUsRoute'
 import Authentication from './AuthenticatonRoute';
 import house from './HouseRoute'
+import FavoriteRoute from './FavoriteRoute'
 // intializing express router
 const router = express.Router();
 // intializing express with JSON
@@ -19,6 +20,7 @@ router.use('/cms-api', cms);
 router.use('/setting-api', setting);
 router.use('/contactUs-api', contactUs);
 router.use('/house-api', house);
+router.use('/favorite-api', FavoriteRoute);
 
 
 

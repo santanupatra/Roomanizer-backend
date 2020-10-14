@@ -2,8 +2,6 @@
 import User from '../../Models/User';
 import Room from '../../Models/Room';
 import config from '../../../config/config'
-import bcrypt from 'bcrypt';
-import nodeMailer from '../../../config/nodemailer'
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
 
@@ -11,20 +9,29 @@ const updateLandLord = async(req, res) => {
     if(req.params.landLordId == null) {
         return res.status(400).json({msg: "parameter missing.."});
     }
+    console.log(req.params.landLordId)
+
     try {
         const user = await User.findById({
             _id: req.params.landLordId
         });
         if(user){
+            console.log(req.body)
             let allData = req.body;
              let setUserData = {
                 firstName:allData.firstName,
                 lastName:allData.lastName,
+                //socialMediaLink:allData.socialMediaLink,
+                facebookLink:allData.facebookLink,
+                twitterLink:allData.twitterLink,
+                gsuiteLink:allData.gsuiteLink,
+                dateOfBirth:allData.dateOfBirth,
+                age:allData.age,
                 name:allData.lastName?allData.firstName+' '+allData.lastName:allData.firstName,
                 userType:'landlord'
              }
              let setRoomData = {
-                user_Id:user_Id,
+                user_Id:allData.user_Id,
                 roomName:allData.roomName,
                 aboutRoom:allData.aboutRoom,
                 flateMate:allData.flateMate,
@@ -40,6 +47,7 @@ const updateLandLord = async(req, res) => {
                 chargesType:allData.chargesType,
                 budget:allData.budget,
                 address:allData.address,
+                ageRange:allData.ageRange,
                 city:allData.city,
                 zipCode:allData.zipCode,
                 longitude:allData.longitude,
@@ -55,9 +63,12 @@ const updateLandLord = async(req, res) => {
                   $set: setUserData
                 }
             );
+            console.log(req.params.landLordId)
             const roomDetails = await Room.findOne({
+                
                 user_Id: ObjectId(req.params.landLordId)
             });
+            console.log(req.params.landLordId)
             if(roomDetails){
                 const roomUpdate = await Room.findByIdAndUpdate(
                     { _id: roomDetails._id },
@@ -88,6 +99,9 @@ const roomImageUpload = async(req, res) => {
     if(req.params.landLordId == null) {
         return res.status(400).jsn({ ack:false, msg:"Parameter missing !!!" });
     }
+    console.log(req.params.landLordId)
+    console.log("req.files",req.files)
+
     try {
         const userDetails = await User.findById({_id:req.params.landLordId});
         let updateData = await User.findByIdAndUpdate(
@@ -108,8 +122,9 @@ const roomImageUpload = async(req, res) => {
             user_Id:req.params.landLordId,
             roomImage:total_image
         }
-        
-          const userExit = await Room.findOne({user_Id:mongoose.Types.ObjectId(req.params.chefId)});
+          const userExit = await Room.findOne({user_Id:mongoose.Types.ObjectId(req.params.landLordId)});
+          console.log('userExit',userExit);
+
              let updatechef;
             if(userExit){
                  updatechef = await Room.findByIdAndUpdate(
@@ -130,5 +145,108 @@ const roomImageUpload = async(req, res) => {
         res.status(500).json({ msg: "Something went wrong" });
     }
 }
+const listroomDetails = async(req, res) => {
+    if(req.params.landLordId == null) {
+        return res.status(400).jsn({msg:"Parameter missing..."});
+    }
+    try {
+        const details = await Room.findOne({ user_Id: req.params.landLordId });
+        res.status(200).json({data:details});
+    } catch (err) {
+        console.log('Error => ',err.message);
+        res.status(500).json({msg:"Something went wrong"});
+    }
+}
+const allroomList = async(req, res) => {
+    if(req.query.page == null || req.query.perpage==null){
+        return res.status(400).send({ack:1, message:"Parameter missing..."})
+    }
+    
+    let keyword = req.query;
+    let limit = parseInt(req.query.perpage);
+    let page = req.query.page;
+    var skip = (limit*page);
+    let filterData = {}
+  
+    if(keyword.houseRules && keyword.houseRules.length > 0){
+      var rulesArr = keyword.houseRules.split(',');
+      filterData = {
+          'houseRules.label' :  { $in : rulesArr }
+      }
+    }
+    if(keyword.animities && keyword.animities.length > 0){
+      var animitiesArr = keyword.animities.split(',');
+      filterData = {
+          'animities.label' :  { $in : animitiesArr }
+      }
+    }
+    let noOfBedRoom
+    if(keyword.noOfBedRoom){
+        noOfBedRoom = keyword.noOfBedRoom;
+        filterData.noOfBedRoom = noOfBedRoom;
+    }
+    let city
+    if (keyword.city) {
+        city = keyword.city;
+        filterData.city = { $regex: city, $options: 'i' };
+    } 
+    let location
+    if (keyword.location) {
+      location = keyword.location;
+      filterData.address = location;
+    } 
+    let moveIn
+    if (keyword.moveIn) {
+        moveIn = keyword.moveIn;
+        filterData.moveIn = moveIn;
+      }
+      let ageRange
+      if (keyword.ageRange) {
+        ageRange = keyword.ageRange;
+        filterData.ageRange = ageRange;
+      } 
+      let duration
+      if (keyword.duration) {
+        duration = keyword.duration;
+        filterData.duration = duration;
+      } 
+      let budget
+      if (keyword.budget) {
+        budget = keyword.budget;
+        filterData.budget = budget;
+      } 
+      let flateMate
+      if (keyword.flateMate) {
+        flateMate = keyword.flateMate;
+        filterData.flateMate = flateMate;
+      }
+      filterData.isActive =true;
+      filterData.isDeleted =false;
+      
 
-export default { updateLandLord,roomImageUpload }
+    try {
+        
+        const list = await Room.find(filterData)
+        .populate({
+            path: "user",
+            model: "user"
+          })
+        .skip(skip)
+        .limit(limit)
+        .sort({ createdDate: 'DESC' });
+        console.log("list",list);
+        const count = await Room.find(filterData).countDocuments();
+        const result = {
+            'list': list,
+            'count': count,
+            'limit': limit
+        };
+        res.status(200).json({ data: result});
+        
+    } catch (err) {
+        console.log("Error => ",err.message);
+        res.status(500).json({msg:"Something went wrong."});
+    }
+  }
+
+export default { updateLandLord,roomImageUpload,listroomDetails,allroomList}

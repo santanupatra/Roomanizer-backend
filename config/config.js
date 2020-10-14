@@ -11,9 +11,12 @@ const defaultData = {
   DATABASE_URI: 'mongodb://roomanizer:rooman1zer2020@111.93.169.90:27929/?authSource=admin&readPreference=primary&appname=MongoDB%20Compass&ssl=false',
   IMAGE_PATH: '/image/',
   USER_IMAGE_PATH: '/userImage/',
+  ROOM_IMAGE_PATH: '/roomImage/',
+  AMINITIES_IMAGE_PATH:'/aminitiesImage/',
+
   // SERVICE_IMAGE_PATH: '/serviceImage/',
   LOGO_IMAGE_PATH: '/logo/',
-  ROOM_IMAGE_PATH: '/roomImage/',
+ // ROOM_IMAGE_PATH: '/roomImage/',
 }
 
 export default defaultData;

@@ -5,6 +5,10 @@ import upload from '../../../config/FileUpload';
 // intializing express router
 const router = express.Router();
 router.put('/:landLordId', Authorization,LandLordController.updateLandLord);
-router.put('/completeChef/:landLordId', Authorization,upload.uploadRoomImage,LandLordController.roomImageUpload);
+router.put('/roomImage/:landLordId', Authorization,upload.uploadRoomImage,LandLordController.roomImageUpload);
+router.get('/room/:landLordId',Authorization,LandLordController.listroomDetails);
+router.get('/',Authorization,LandLordController.allroomList);
+
+
 
 export default router;

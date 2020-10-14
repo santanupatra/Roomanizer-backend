@@ -29,7 +29,8 @@ const schema = new Schema({
     gender: {
         type: String,
         enum: ['Male','Female','Other']
-    },              
+    },   
+             
     occupation: {
         type: String,
     },
@@ -38,7 +39,11 @@ const schema = new Schema({
     },
     profilePicture: {
         type: String, 
-        //default: "/image/user.png"
+        default: "/image/user.png"
+    },
+    roomPicture: {
+        type: String, 
+        default: "/image/user.png"
     },
     aboutMe: {
         type: String
@@ -64,7 +69,7 @@ const schema = new Schema({
     otptime:{
         type:String
     },
-    longitude: {
+    longitude:{
         type: Number
     },
     latitude: {
@@ -121,6 +126,24 @@ const schema = new Schema({
     isEmailVerified: {
         type: Boolean, 
         default: false
+    },
+    // socialMediaId:{
+    //     type:[]
+    // },
+    // socialMediaLink:{
+    //     //  type:[]
+    //     facebookLink:'',
+    //     twitterLink:'',
+    //     gsuiteLink:'',
+    //   },
+    facebookLink:{
+        type: String
+    },
+    twitterLink:{
+        type: String
+    },
+    gsuiteLink:{
+        type: String
     },
     isActive: {
         type: Boolean, 
