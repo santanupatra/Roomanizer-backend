@@ -13,7 +13,9 @@ var ObjectId = require('mongodb').ObjectID;
  */
 const addfavorite = async(req, res) => {
     
-    if(req.body.loginUserId == null || req.body.type == null) {
+    if(req.body.loginUserId == null 
+        || req.body.type == null
+        ) {
         return res.status(400).json({ack:false, msg:"Parameter missing..." })
     }
     try {
