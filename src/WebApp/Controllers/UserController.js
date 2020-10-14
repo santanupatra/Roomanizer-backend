@@ -128,7 +128,7 @@ const updateUser = async(req, res) => {
         res.status(500).json({msg:"Something went wrong."});
     }
   }
-export default {changePassword,getProfile,updateUser}
+// export default {changePassword,getProfile,updateUser}
 
 const listHouses = async(req, res) => {
     console.log("aaa")
@@ -142,4 +142,4 @@ const listHouses = async(req, res) => {
     }
 }
 
-export default {changePassword,getProfile,listHouses}
+export default {changePassword,getProfile,listHouses,updateUser}
