@@ -13,9 +13,7 @@ var ObjectId = require('mongodb').ObjectID;
  */
 const addfavorite = async(req, res) => {
     
-    if(req.body.loginUserId == null 
-        //|| req.body.type == null
-        ) {
+    if(req.body.loginUserId == null || req.body.type == null) {
         return res.status(400).json({ack:false, msg:"Parameter missing..." })
     }
     try {
@@ -41,9 +39,6 @@ const addfavorite = async(req, res) => {
                 
             }else{
                 const allData = req.body
-                if(allData.roomMateId !==null)allData.type ="roomMate"
-                if(allData.roomMateId ==null)allData.type ="room"
-
                 const addfav = await new Favorite(allData).save();
                 res.status(200).json({msg:"Successfully add to favorite list."});
             }
