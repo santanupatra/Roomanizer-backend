@@ -97,7 +97,7 @@ const favRoomList = async(req, res) => {
     }
   }
 
-  const favRoomMateList = async(req, res) => {
+  const favRoomMateList1 = async(req, res) => {
     // if(req.query.page == null || req.query.perpage==null){
     //     return res.status(400).send({ack:1, message:"Parameter missing..."})
     // }
@@ -138,6 +138,15 @@ const favRoomList = async(req, res) => {
         res.status(500).json({msg:"Something went wrong."});
     }
   }
-  
+  const favRoomMateList = async(req, res) => {
+    try {
+        console.log(req.params.loginUserId)
+        const city = await Favorite.find({ isActive:true,loginUserId:req.params.loginUserId}).populate("roomMateId" , "firstName  lastName    dateOfBirth    gender   maxBudget   profilePicture  age   readyToMove").exec();
+        res.status(200).json({data:city});
+    } catch (err) {
+        console.log('Error => ',err.message);
+        res.status(500).json({msg:"Something went wrong"});
+    }
+}
 
 export default {addfavorite,favRoomList,favRoomMateList}
