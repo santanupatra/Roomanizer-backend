@@ -8,7 +8,5 @@ router.put('/:landLordId', Authorization,LandLordController.updateLandLord);
 router.put('/roomImage/:landLordId', Authorization,upload.uploadRoomImage,LandLordController.roomImageUpload);
 router.get('/room/:landLordId',Authorization,LandLordController.listroomDetails);
 router.get('/',Authorization,LandLordController.allroomList);
-
-
-
+router.delete('/:roomId/:imageId',Authorization,LandLordController.deleteRoomImage);
 export default router;
