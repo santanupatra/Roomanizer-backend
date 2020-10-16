@@ -84,7 +84,7 @@ const updateLandLord = async(req, res) => {
             res.status(401).json({msg: "User Details not found with this id"});
         }  
     } catch (err) {
-        console.log("Error => ",err.message);
+        console.log("Error1 => ",err.message);
         res.status(500).json({msg:"Something went wrong."});
     }
   }
@@ -96,12 +96,9 @@ const updateLandLord = async(req, res) => {
  * return JSON
  */
 const roomImageUpload = async(req, res) => {
-    if(req.params.landLordId == null) {
-        return res.status(400).jsn({ ack:false, msg:"Parameter missing !!!" });
+    if(req.params.landLordId == null || req.files.length <=0) {
+        return res.status(200).json({ ack:false, msg:"Please Choose image file !!!" });
     }
-    console.log(req.params.landLordId)
-    console.log("req.files",req.files)
-
     try {
         const userDetails = await User.findById({_id:req.params.landLordId});
         let updateData = await User.findByIdAndUpdate(
@@ -110,6 +107,12 @@ const roomImageUpload = async(req, res) => {
                 $set: {userType:'landlord'}
             }
         );
+        const userExit = await Room.findOne({user_Id:ObjectId(req.params.landLordId)});
+        let existingImage = userExit.roomImage;
+        let allExistngImage=[];
+        const newList = await Promise.all(existingImage.map(async(value,key) => {
+            allExistngImage.push({image:value.image})
+          }))
         let allData = req.body;
         let setData ;
         let filesAmount = req.files.length;
@@ -117,13 +120,17 @@ const roomImageUpload = async(req, res) => {
         for (let i = 0; i < filesAmount; i++) {
             total_image.push({ image: config.ROOM_IMAGE_PATH + req.files[i].filename });
         }
-       
+       let updatedIamge
+       if(allExistngImage){
+            updatedIamge = allExistngImage.concat(total_image);
+       }else{
+            updatedIamge = total_image;
+       }
         setData = {
             user_Id:req.params.landLordId,
-            roomImage:total_image
+            roomImage:updatedIamge
         }
-          const userExit = await Room.findOne({user_Id:mongoose.Types.ObjectId(req.params.landLordId)});
-          console.log('userExit',userExit);
+         
 
              let updatechef;
             if(userExit){
@@ -141,19 +148,45 @@ const roomImageUpload = async(req, res) => {
             res.status(200).json({ack:true, msg: "Successfully room image upload " });
         
     } catch(err) {
-        console.log("Error => ", err.message);
+        console.log("Error2 => ", err.message);
         res.status(500).json({ msg: "Something went wrong" });
     }
 }
+/**for delete Room Image */
+const deleteRoomImage = async (request, response) => {
+    const roomId = request.params.roomId;
+    const imageId = request.params.imageId;
+    try {
+      const roomDetails = await Room.findById(roomId);
+      if (roomDetails) {
+        await Room.findOneAndUpdate(
+          { _id: roomId },
+          {
+            $pull: {
+                roomImage: { _id: imageId },
+            }
+          }
+        );
+        response.status(200).json({ack:true, msg: 'Image deleted successfully.' });
+  
+      } else {
+        response.status(404).json({ msg: 'Property not found' });
+      }
+    } catch (error) {
+      console.error(error)
+      response.status(500).json({ msg: 'Server error' });
+    }
+  }
 const listroomDetails = async(req, res) => {
     if(req.params.landLordId == null) {
         return res.status(400).jsn({msg:"Parameter missing..."});
     }
+    
     try {
-        const details = await Room.findOne({ user_Id: req.params.landLordId });
+        const details = await Room.findOne({ user_Id: ObjectId(req.params.landLordId)});
         res.status(200).json({data:details});
     } catch (err) {
-        console.log('Error => ',err.message);
+        console.log('Error3 => ',err.message);
         res.status(500).json({msg:"Something went wrong"});
     }
 }
@@ -244,9 +277,9 @@ const allroomList = async(req, res) => {
         res.status(200).json({ data: result});
         
     } catch (err) {
-        console.log("Error => ",err.message);
+        console.log("Error4 => ",err.message);
         res.status(500).json({msg:"Something went wrong."});
     }
   }
 
-export default { updateLandLord,roomImageUpload,listroomDetails,allroomList}
+export default { updateLandLord,roomImageUpload,deleteRoomImage,listroomDetails,allroomList}
