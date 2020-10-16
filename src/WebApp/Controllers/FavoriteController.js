@@ -43,7 +43,6 @@ const addfavorite = async(req, res) => {
                 const allData = req.body
                 if(allData.roomMateId !==null)allData.type ="roomMate"
                 if(allData.roomMateId ==null)allData.type ="room"
-
                 const addfav = await new Favorite(allData).save();
                 res.status(200).json({msg:"Successfully add to favorite list."});
             }
@@ -118,7 +117,7 @@ const favRoomList = async(req, res) => {
         
         const list = await Favorite.find(filterData)
         .populate({
-            path: "user",
+            path: "roomMateId",
             model: "user"
           })
         .skip(skip)

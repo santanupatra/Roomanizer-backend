@@ -4,7 +4,9 @@ import Room from '../../Models/Room';
 import config from '../../../config/config'
 import bcrypt from 'bcrypt';
 import House from '../../Models/House';
-var ObjectId = require('mongodb').ObjectID;
+import Favorite from '../../Models/Favorite';
+import mongoose from "mongoose";
+const ObjectId = mongoose.Types.ObjectId;
 
 /**
  * changePassword
@@ -179,7 +181,8 @@ const allUserList = async(req, res) => {
     if(req.query.page == null || req.query.perpage==null){
         return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
-    
+    console.log('loginDetails',req.query.loginUserId)
+
     let keyword = req.query;
     let limit = parseInt(req.query.perpage);
     let page = req.query.page;
@@ -233,17 +236,25 @@ const allUserList = async(req, res) => {
       filterData.userType ="customer";
 
     try {
-        
         const list = await User.find(filterData)
-       
-
         .skip(skip)
         .limit(limit)
         .sort({ createdDate: 'DESC' });
-        console.log("list",list);
+        const newList = await Promise.all(list.map(async(value,key) => {
+           
+          const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomMateId:ObjectId(value._id),isActive:true})
+          
+          let newFav = {...value.toJSON()}
+          if(userList && userList.length>0){
+            newFav.isFav=true;
+          }else{
+            newFav.isFav=false;
+          }
+          return newFav
+        }))
         const count = await User.find(filterData).countDocuments();
         const result = {
-            'list': list,
+            'list': newList,
             'count': count,
             'limit': limit
         };
