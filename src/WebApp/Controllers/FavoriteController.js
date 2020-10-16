@@ -13,7 +13,9 @@ var ObjectId = require('mongodb').ObjectID;
  */
 const addfavorite = async(req, res) => {
     
-    if(req.body.loginUserId == null || req.body.type == null) {
+    if(req.body.loginUserId == null 
+        //|| req.body.type == null
+        ) {
         return res.status(400).json({ack:false, msg:"Parameter missing..." })
     }
     try {
@@ -39,6 +41,8 @@ const addfavorite = async(req, res) => {
                 
             }else{
                 const allData = req.body
+                if(allData.roomMateId !==null)allData.type ="roomMate"
+                if(allData.roomMateId ==null)allData.type ="room"
                 const addfav = await new Favorite(allData).save();
                 res.status(200).json({msg:"Successfully add to favorite list."});
             }
@@ -133,15 +137,6 @@ const favRoomList = async(req, res) => {
         res.status(500).json({msg:"Something went wrong."});
     }
   }
-  const favRoomMateList1 = async(req, res) => {
-    try {
-        console.log(req.params.loginUserId)
-        const city = await Favorite.find({ isActive:true,loginUserId:req.params.loginUserId}).populate("roomMateId" , "firstName  lastName    dateOfBirth    gender   maxBudget   profilePicture  age   readyToMove").exec();
-        res.status(200).json({data:city});
-    } catch (err) {
-        console.log('Error => ',err.message);
-        res.status(500).json({msg:"Something went wrong"});
-    }
-}
+  
 
 export default {addfavorite,favRoomList,favRoomMateList}
