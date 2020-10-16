@@ -182,6 +182,7 @@ const allUserList = async(req, res) => {
         return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
     console.log('loginDetails',req.query.loginUserId)
+
     let keyword = req.query;
     let limit = parseInt(req.query.perpage);
     let page = req.query.page;
@@ -240,7 +241,9 @@ const allUserList = async(req, res) => {
         .limit(limit)
         .sort({ createdDate: 'DESC' });
         const newList = await Promise.all(list.map(async(value,key) => {
+           
           const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomMateId:ObjectId(value._id),isActive:true})
+          
           let newFav = {...value.toJSON()}
           if(userList && userList.length>0){
             newFav.isFav=true;
