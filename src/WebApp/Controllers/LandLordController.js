@@ -255,13 +255,12 @@ const allroomList = async(req, res) => {
       }
       filterData.isActive =true;
       filterData.isDeleted =false;
-      
 
     try {
         
         const list = await Room.find(filterData)
         .populate({
-            path: "user",
+            path: "user_Id",
             model: "user"
           })
         .skip(skip)
