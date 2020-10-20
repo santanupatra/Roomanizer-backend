@@ -76,7 +76,11 @@ const favRoomList = async(req, res) => {
         const list = await Favorite.find(filterData)
         .populate({
             path: "roomId",
-            model: "room"
+            model: "room",
+            populate: {
+                path: 'user_Id',
+                model: 'user'           
+            }
           })
           .populate({
             path: "loginUserId",
