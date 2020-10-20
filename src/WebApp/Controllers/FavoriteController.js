@@ -75,8 +75,12 @@ const favRoomList = async(req, res) => {
         
         const list = await Favorite.find(filterData)
         .populate({
-            path: "room",
+            path: "roomId",
             model: "room"
+          })
+          .populate({
+            path: "loginUserId",
+            model: "user"
           })
         .skip(skip)
         .limit(limit)
