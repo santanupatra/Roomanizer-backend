@@ -4,7 +4,7 @@ import Room from '../../Models/Room';
 import config from '../../../config/config'
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
-
+import moment from 'moment'
 const updateLandLord = async(req, res) => {
     if(req.params.landLordId == null) {
         return res.status(400).json({msg: "parameter missing.."});
@@ -191,6 +191,8 @@ const listroomDetails = async(req, res) => {
     }
 }
 const allroomList = async(req, res) => {
+  console.log("req.query",req.query);
+  console.log("asmita");
     if(req.query.page == null || req.query.perpage==null){
         return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
@@ -230,7 +232,7 @@ const allroomList = async(req, res) => {
     } 
     let moveIn
     if (keyword.moveIn) {
-        moveIn = keyword.moveIn;
+        moveIn = { $lt: moment(keyword.moveIn).toDate() };
         filterData.moveIn = moveIn;
       }
       let ageRange
@@ -255,7 +257,7 @@ const allroomList = async(req, res) => {
       }
       filterData.isActive =true;
       filterData.isDeleted =false;
-
+     console.log("filterData==",filterData)
     try {
         
         const list = await Room.find(filterData)
