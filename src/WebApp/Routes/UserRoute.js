@@ -6,7 +6,7 @@ import upload from '../../../config/FileUpload';
 const router = express.Router();
 
 router.post('/chnagePassword', Authorization,UserController.changePassword);
-router.get('/:userId', Authorization,UserController.getProfile);
+router.get('/:userId', UserController.getProfile);
 router.put('/:userId', Authorization,UserController.updateUser);
 router.get('/', UserController.allUserList);
 router.put('/profilePicture/:userId', Authorization,upload.uploadUserImage,UserController.profilePicture);
