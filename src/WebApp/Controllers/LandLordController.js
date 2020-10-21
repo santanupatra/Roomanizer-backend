@@ -272,7 +272,7 @@ const allroomList = async(req, res) => {
         console.log("list",list);
         const newList = await Promise.all(list.map(async(value,key) => {
            
-          const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomMateId:ObjectId(value._id),isActive:true})
+          const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomId:ObjectId(value._id),isActive:true})
           
           let newFav = {...value.toJSON()}
           if(userList && userList.length>0){
