@@ -197,7 +197,7 @@ const allroomList = async(req, res) => {
     if(req.query.page == null || req.query.perpage==null){
         return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
-    
+    console.log('loginDetails',req.query.loginUserId) 
     let keyword = req.query;
     let limit = parseInt(req.query.perpage);
     let page = req.query.page;
