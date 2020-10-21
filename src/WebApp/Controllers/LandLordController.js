@@ -1,6 +1,7 @@
 
 import User from '../../Models/User';
 import Room from '../../Models/Room';
+import Favorite from '../../Models/Favorite'
 import config from '../../../config/config'
 import mongoose from "mongoose";
 const ObjectId = mongoose.Types.ObjectId;
@@ -269,9 +270,21 @@ const allroomList = async(req, res) => {
         .limit(limit)
         .sort({ createdDate: 'DESC' });
         console.log("list",list);
+        const newList = await Promise.all(list.map(async(value,key) => {
+           
+          const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomMateId:ObjectId(value._id),isActive:true})
+          
+          let newFav = {...value.toJSON()}
+          if(userList && userList.length>0){
+            newFav.isFav=true;
+          }else{
+            newFav.isFav=false;
+          }
+          return newFav
+        }))
         const count = await Room.find(filterData).countDocuments();
         const result = {
-            'list': list,
+            'list': newList,
             'count': count,
             'limit': limit
         };

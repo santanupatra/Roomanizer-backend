@@ -268,7 +268,7 @@ const allUserList = async(req, res) => {
 
 
   const profilePicture = async(req, res) => {
-    console.log(req.file)
+   
     if(req.params.userId == null || req.file == null) {
       
         return res.status(400).json({ msg:"Parameter missing !!!" });
