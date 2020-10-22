@@ -18,7 +18,6 @@ const createTemplate = async(req, res) => {
         res.status(500).json({ msg:"Something went wrong" });
     }
 }
-
 /**
  * listTemplate
  * Here get email details
