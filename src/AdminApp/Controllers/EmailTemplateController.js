@@ -35,7 +35,6 @@ const listTemplate = async(req, res) => {
         res.status(500).json({ msg:"Something went wrong" });
     }
 }
-
 /**
  * updateTemplate
  * Here update email details
