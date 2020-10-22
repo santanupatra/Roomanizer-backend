@@ -2,11 +2,11 @@
 
 # dependencies
 /node_modules
-/.pnp
-.pnp.js
+ /.pnp
+ .pnp.js
 
 #image folder
-/uploads
+# /uploads
 
 # testing
 /coverage

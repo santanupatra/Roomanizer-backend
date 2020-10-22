@@ -1,8 +1,6 @@
 import Cms from '../../Models/Cms';
  import config from '../../../config/config';
 
-
-
 const listCms = async(req, res) => {
     if(req.params.SlugId == null) {
         return res.status(400).jsn({msg:"Parameter missing..."});

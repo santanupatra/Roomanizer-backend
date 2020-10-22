@@ -1,9 +1,5 @@
 import House from '../../Models/House';
 
-
-
-
-
 const listAllHouse = async(req, res) => {
     try {
         const city = await House.find({ isDeleted: false });
