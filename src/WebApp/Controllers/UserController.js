@@ -139,10 +139,19 @@ const updateUser = async(req, res) => {
                 _id: { $ne: req.params.userId }
             });
             let allData = req.body;
+            var latitude = allData.latitude;
+            var longitude = allData.longitude;
+
             const update = await User.findByIdAndUpdate(
               { _id: req.params.userId },
                 {
-                  $set: allData
+                  $set: allData,
+                  location: {
+                    type: 'Point',
+                    coordinates: [longitude, latitude]
+                    }
+                  
+                  
                 }
             );
             const roomExit = await Room.findOne({
@@ -226,20 +235,65 @@ const allUserList = async(req, res) => {
         gender = keyword.gender;
         filterData.gender = gender;
       } 
-      let location
-      if (keyword.location) {
-        location = keyword.location.replace("%20", "");
-        filterData.address = location;
+      //let location
+      
+       if (keyword.location) {
+      //   console.log(keyword.location)
+      //  // location = keyword.location.replace("%20", "");
+      
+        //   filterData.location = keyword.location: {
+        //   $near: {
+        //    $maxDistance: 1000,
+        //    $geometry: {
+        //     type: "Point",
+        //     coordinates: [long, latt]
+        //    }
+        //   }
+        //  }
+       
       } 
+      if (keyword.lng && keyword.lat) {
+        console.log(keyword.lng , keyword.lat)
+        
+                filterData = {
+                    location:
+                    {
+                        $near:
+                        {
+                            $geometry: {
+                                type: "Point",
+                                coordinates: [keyword.lng, keyword.lat]
+                            },
+                            $maxDistance: 5000,
+                            //spherical: true
+
+                        }
+                    }
+                }
+            }
       filterData.isAdmin =false;
       filterData.isDeleted =false;
       filterData.userType ="customer";
-
+        console.log(keyword)
     try {
+         console.log(filterData)
         const list = await User.find(filterData)
         .skip(skip)
         .limit(limit)
         .sort({ createdDate: 'DESC' });
+
+      //   const list = await User.aggregate([
+      //     { "$geoNear": {
+      //         "near": {
+      //             "type": "Point",
+      //             "coordinates": [keyword.lng,keyword.lat]
+      //         },
+      //          "distanceField": "location",
+      //          "spherical": true,
+      //         "maxDistance": 10000
+      //     }}
+      // ])
+         
         const newList = await Promise.all(list.map(async(value,key) => {
            
           const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomMateId:ObjectId(value._id),isActive:true})
@@ -252,7 +306,7 @@ const allUserList = async(req, res) => {
           }
           return newFav
         }))
-        const count = await User.find(filterData).countDocuments();
+        const count = await User.find(filterData).count();
         const result = {
             'list': newList,
             'count': count,
