@@ -48,7 +48,7 @@ const signUp = async (req, res) => {
 
     }
   } catch (err) {
-    console.log("Error => ", err.message);
+    console.log("Error_SignUp => ", err.message);
     res.status(500).json({ msg: "Something went wrong." });
   }
 }

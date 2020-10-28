@@ -1,5 +1,22 @@
 import mongoose from 'mongoose';
 const  {Schema}  = mongoose;
+//mongoose.set('useCreateIndex', true);
+
+const {Point} = require('mongoose-geojson-schema');
+// Creating Point  schema
+
+const pointSchema = new mongoose.Schema({
+  type: {
+    type: String,
+    enum: ['Point'],
+   // required: true
+  },
+  coordinates: {
+    type: [Number],
+   // required: true
+  }
+})
+
 // Creating user schema
 const schema = new Schema({
     // _id: {String},
@@ -75,10 +92,14 @@ const schema = new Schema({
     latitude: {
         type: Number
     },
+    // location: {
+    //     type: { type: String, default: "Point" },
+    //     coordinates: [] //[<longitude>, <latitude>]
+    // },
     location: {
-        type: { type: String, default: "Point" },
-        coordinates: [] //[<longitude>, <latitude>]
-    },
+        type: pointSchema,
+        //required: true
+      },
     userType: {
         type: String,
         enum: ['admin','customer','landlord'],
@@ -165,6 +186,8 @@ const schema = new Schema({
         default: false
     },     
 });
-// schema.index({ "location": "2dsphere" });
+ schema.index({ location: "2dsphere" });
+ //schema.createIndex({location:"2dsphere"});
 const User = mongoose.model('user', schema);
+
 export default User;
