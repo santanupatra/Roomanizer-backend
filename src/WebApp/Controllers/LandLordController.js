@@ -204,21 +204,21 @@ const allroomList = async(req, res) => {
     var skip = (limit*page);
     let filterData = {}
   
-    if(keyword.houseRules && keyword.houseRules.length > 0){
-      var rulesArr = keyword.houseRules.split(',');
+    if(keyword.houserules){
+      var rulesArr = keyword.houserules.split(',');
       filterData = {
           'houseRules.label' :  { $in : rulesArr }
       }
     }
-    if(keyword.animities && keyword.animities.length > 0){
-      var animitiesArr = keyword.animities.split(',');
+    if(keyword.amenities){
+      var animitiesArr = keyword.amenities.split(',');
       filterData = {
           'animities.label' :  { $in : animitiesArr }
       }
     }
     let noOfBedRoom
-    if(keyword.noOfBedRoom){
-        noOfBedRoom = keyword.noOfBedRoom;
+    if(keyword.bedrooms){
+        noOfBedRoom = keyword.bedrooms;
         filterData.noOfBedRoom = noOfBedRoom;
     }
     let city
@@ -227,34 +227,34 @@ const allroomList = async(req, res) => {
         filterData.city = { $regex: city, $options: 'i' };
     } 
     let location
-    if (keyword.location) {
-      location = keyword.location;
+    if (keyword.address) {
+      location = keyword.address;
       filterData.address = location;
     } 
     let moveIn
-    if (keyword.moveIn) {
-        moveIn = { $lt: moment(keyword.moveIn).toDate() };
-        filterData.moveIn = moveIn;
-      }
+    // if (keyword.moveIn) {
+    //     moveIn = { $lt: moment(keyword.moveIn).toDate() };
+    //     filterData.moveIn = moveIn;
+    //   }
       let ageRange
       if (keyword.ageRange) {
         ageRange = keyword.ageRange;
         filterData.ageRange = ageRange;
       } 
       let duration
-      if (keyword.duration) {
-        duration = keyword.duration;
-        filterData.duration = duration;
-      } 
-      let budget
-      if (keyword.budget) {
-        budget = keyword.budget;
-        filterData.budget = budget;
-      } 
+      // if (keyword.duration) {
+      //   duration = keyword.duration;
+      //   filterData.duration = duration;
+      // } 
+      // let budget
+      // if (keyword.budget) {
+      //   budget = keyword.budget;
+      //   filterData.budget = budget;
+      // } 
       let flateMate
-      if (keyword.flateMate) {
-        flateMate = keyword.flateMate;
-        filterData.flateMate = flateMate;
+      if (keyword.gender) {
+        flateMate = keyword.gender;
+        filterData.gender = flateMate;
       }
       filterData.isActive =true;
       filterData.isDeleted =false;
@@ -269,7 +269,7 @@ const allroomList = async(req, res) => {
         .skip(skip)
         .limit(limit)
         .sort({ createdDate: 'DESC' });
-        console.log("list",list);
+        console.log("list---->",list);
         const newList = await Promise.all(list.map(async(value,key) => {
            
           const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomId:ObjectId(value._id),isActive:true})
