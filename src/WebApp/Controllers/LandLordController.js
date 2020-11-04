@@ -192,6 +192,7 @@ const listroomDetails = async(req, res) => {
     }
 }
 const allroomList = async(req, res) => {
+  console.log('REQ==>',req)
   console.log("req.query",req.query);
   console.log("asmita");
     if(req.query.page == null || req.query.perpage==null){
@@ -203,17 +204,19 @@ const allroomList = async(req, res) => {
     let page = req.query.page;
     var skip = (limit*page);
     let filterData = {}
-  
-    if(keyword.houserules){
+    console.log('houserules==>',keyword.houserules)
+    if(keyword.houserules  && keyword.houserules.length>0){
+      // console.log('houseRules==>',keyword.houseRules)
+      // console.log(keyword.houseRules)
       var rulesArr = keyword.houserules.split(',');
       filterData = {
-          'houseRules.label' :  { $in : rulesArr }
+          'houseRules.value' :  { $in : rulesArr }
       }
     }
-    if(keyword.amenities){
+    if(keyword.amenities && keyword.amenities.length > 0){
       var animitiesArr = keyword.amenities.split(',');
       filterData = {
-          'animities.label' :  { $in : animitiesArr }
+          'animities.value' :  { $in : animitiesArr }
       }
     }
     let noOfBedRoom
@@ -232,7 +235,11 @@ const allroomList = async(req, res) => {
       filterData.address = location;
     } 
     let moveIn
-    // if (keyword.moveIn) {
+    // if (keyword.moveIn==''||keyword.moveIn==null) {
+    //     moveIn = '';
+    //     filterData.moveIn = moveIn;
+    //   }
+    //   else{
     //     moveIn = { $lt: moment(keyword.moveIn).toDate() };
     //     filterData.moveIn = moveIn;
     //   }
@@ -242,19 +249,27 @@ const allroomList = async(req, res) => {
         filterData.ageRange = ageRange;
       } 
       let duration
-      // if (keyword.duration) {
-      //   duration = keyword.duration;
+      // if (keyword.duration==''||keyword.duration==null) {
+      //   duration = '';
       //   filterData.duration = duration;
       // } 
-      // let budget
-      // if (keyword.budget) {
-      //   budget = keyword.budget;
+      // else{
+      //   duration = keyword.duration;
+      //   filterData.duration = duration;
+      // }
+      let budget
+      // if (keyword.budget==''||keyword.budget==null) {
+      //   budget = '';
       //   filterData.budget = budget;
       // } 
+      // else{
+      //   budget = keyword.budget;
+      //   filterData.budget = budget;
+      // }
       let flateMate
       if (keyword.gender) {
         flateMate = keyword.gender;
-        filterData.gender = flateMate;
+        filterData.flateMate = flateMate;
       }
       filterData.isActive =true;
       filterData.isDeleted =false;
