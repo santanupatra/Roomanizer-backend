@@ -192,7 +192,7 @@ const listroomDetails = async(req, res) => {
     }
 }
 const allroomList = async(req, res) => {
-  console.log('REQ==>',req)
+  // console.log('REQ==>',req)
   console.log("req.query",req.query);
   console.log("asmita");
     if(req.query.page == null || req.query.perpage==null){
@@ -205,20 +205,29 @@ const allroomList = async(req, res) => {
     var skip = (limit*page);
     let filterData = {}
     console.log('houserules==>',keyword.houserules)
-    if(keyword.houserules  && keyword.houserules.length>0){
-      // console.log('houseRules==>',keyword.houseRules)
-      // console.log(keyword.houseRules)
+    if((keyword.houserules && keyword.houserules.length > 0)&&(keyword.amenities && keyword.amenities.length > 0)){
       var rulesArr = keyword.houserules.split(',');
+      var animitiesArr = keyword.amenities.split(',');
       filterData = {
-          'houseRules.value' :  { $in : rulesArr }
+          'houseRules.value' :  { $in : rulesArr },
+          'aminities.value' :  { $in : animitiesArr }
       }
     }
+    else{
+    if(keyword.houserules && keyword.houserules.length > 0){
+      var rulesArr = keyword.houserules.split(',');
+      filterData = {
+        'houseRules.value' :  { $in : rulesArr }
+      }
+    }
+   
     if(keyword.amenities && keyword.amenities.length > 0){
       var animitiesArr = keyword.amenities.split(',');
       filterData = {
-          'animities.value' :  { $in : animitiesArr }
+          'aminities.value' :  { $in : animitiesArr }
       }
     }
+  }
     let noOfBedRoom
     if(keyword.bedrooms){
         noOfBedRoom = keyword.bedrooms;
@@ -229,10 +238,10 @@ const allroomList = async(req, res) => {
         city = keyword.city;
         filterData.city = { $regex: city, $options: 'i' };
     } 
-    let location
-    if (keyword.address) {
-      location = keyword.address;
-      filterData.address = location;
+    let address
+    if (keyword.location) {
+      address = keyword.location;
+      filterData.address = address;
     } 
     let moveIn
     // if (keyword.moveIn==''||keyword.moveIn==null) {
@@ -266,17 +275,33 @@ const allroomList = async(req, res) => {
       //   budget = keyword.budget;
       //   filterData.budget = budget;
       // }
+      // let flateMate
+      // if (keyword.gender) {
+      //   flateMate = keyword.gender;
+      //   filterData.flateMate = flateMate;
+      // }
       let flateMate
-      if (keyword.gender) {
+      if (keyword.gender!=='null') {
+        console.log( "gender",keyword.gender)
         flateMate = keyword.gender;
         filterData.flateMate = flateMate;
-      }
+      } 
       filterData.isActive =true;
       filterData.isDeleted =false;
      console.log("filterData==",filterData)
     try {
         
-        const list = await Room.find(filterData)
+        const list = await Room.find(
+          filterData
+        //   {       
+        // "address":filterData.location,
+        // "noOfBedRoom":filterData.noOfBedRoom,
+        // "flateMate":filterData.gender,
+        // "city":filterData.city,
+        // "aminities": keyword.amenities,
+        // "houseRules":keyword.houserules,
+        //  }
+         )
         .populate({
             path: "user_Id",
             model: "user"
