@@ -244,42 +244,25 @@ const allroomList = async(req, res) => {
       filterData.address = address;
     } 
     let moveIn
-    // if (keyword.moveIn==''||keyword.moveIn==null) {
-    //     moveIn = '';
-    //     filterData.moveIn = moveIn;
-    //   }
-    //   else{
-    //     moveIn = { $lt: moment(keyword.moveIn).toDate() };
-    //     filterData.moveIn = moveIn;
-    //   }
+    if (keyword.moveIn) {
+      moveIn = { $lt: moment(keyword.moveIn).toDate() };
+      filterData.moveIn = moveIn;
+      }
       let ageRange
       if (keyword.ageRange) {
         ageRange = keyword.ageRange;
         filterData.ageRange = ageRange;
       } 
       let duration
-      // if (keyword.duration==''||keyword.duration==null) {
-      //   duration = '';
-      //   filterData.duration = duration;
-      // } 
-      // else{
-      //   duration = keyword.duration;
-      //   filterData.duration = duration;
-      // }
+      if (keyword.duration) {
+        duration = keyword.duration;
+        filterData.duration = duration;
+      } 
       let budget
-      // if (keyword.budget==''||keyword.budget==null) {
-      //   budget = '';
-      //   filterData.budget = budget;
-      // } 
-      // else{
-      //   budget = keyword.budget;
-      //   filterData.budget = budget;
-      // }
-      // let flateMate
-      // if (keyword.gender) {
-      //   flateMate = keyword.gender;
-      //   filterData.flateMate = flateMate;
-      // }
+      if (keyword.budget) {
+        budget = keyword.budget;
+        filterData.budget = budget;
+      } 
       let flateMate
       if (keyword.gender!=='null') {
         console.log( "gender",keyword.gender)
@@ -291,17 +274,7 @@ const allroomList = async(req, res) => {
      console.log("filterData==",filterData)
     try {
         
-        const list = await Room.find(
-          filterData
-        //   {       
-        // "address":filterData.location,
-        // "noOfBedRoom":filterData.noOfBedRoom,
-        // "flateMate":filterData.gender,
-        // "city":filterData.city,
-        // "aminities": keyword.amenities,
-        // "houseRules":keyword.houserules,
-        //  }
-         )
+        const list = await Room.find(filterData)
         .populate({
             path: "user_Id",
             model: "user"

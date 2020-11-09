@@ -14,6 +14,7 @@ const ObjectId = mongoose.Types.ObjectId;
  * return JSON
  */
 const changePassword = (req, res) => {
+
     if (req.params.userId == null || req.body.currentPassword == null || req.body.newPassword == null || req.body.confirmPassword == null) {
         return res.status(400).json({ msg: "Parameter missing.." });
     }
@@ -21,7 +22,14 @@ const changePassword = (req, res) => {
         _id: req.params.userId
     })
     .then(user => {
-        if (bcrypt.compareSync(req.body.currentPassword, user.password)) {
+      console.log("User",user)
+      console.log("user",user.password)
+      console.log("req.body.currentPassword",req.body.currentPassword)
+      const password=req.body.currentPassword
+      var compering=bcrypt.compareSync(password, user.password);
+      console.log("compering",compering)
+        if (compering) {
+          console.log("inside",req.body.currentPassword)
             if (req.body.newPassword == req.body.confirmPassword) {
                 const hash = bcrypt.hashSync(req.body.newPassword, config.SALT_ROUND);
                 User.findByIdAndUpdate(
@@ -198,8 +206,7 @@ const allUserList = async(req, res) => {
     var skip = (limit*page);
     let filterData = {}
   
-    if((keyword.houserules && keyword.houserules.length > 0)||(keyword.amenities && keyword.amenities.length > 0)){
-      console.log("keyword.houserules",keyword.houserules)
+     if((keyword.houserules && keyword.houserules.length > 0)&&(keyword.amenities && keyword.amenities.length > 0)){
       var rulesArr = keyword.houserules.split(',');
       var animitiesArr = keyword.amenities.split(',');
       filterData = {
@@ -207,6 +214,21 @@ const allUserList = async(req, res) => {
           'aminities.value' :  { $in : animitiesArr }
       }
     }
+    else{
+    if(keyword.houserules && keyword.houserules.length > 0){
+      var rulesArr = keyword.houserules.split(',');
+      filterData = {
+        'houseRules.value' :  { $in : rulesArr }
+      }
+    }
+   
+    if(keyword.amenities && keyword.amenities.length > 0){
+      var animitiesArr = keyword.amenities.split(',');
+      filterData = {
+          'aminities.value' :  { $in : animitiesArr }
+      }
+    }
+  }
     // if(keyword.amenities && keyword.amenities.length > 0){
     //   var animitiesArr = keyword.amenities.split(',');
     //   filterData = {
