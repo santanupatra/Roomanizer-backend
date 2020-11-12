@@ -13,11 +13,13 @@ import nodeMailer from '../../../config/nodemailer'
  * return JSON
  */
 const signUp = async (req, res) => {
+  console.log(req.body)
   if (req.body.email == null || req.body.password == null || req.body.confirmPassword == null) {
     return res.status(400).json({ ack: false, msg: "Parameter missing..." })
   }
   try {
     const emailExist = await User.find({ email: req.body.email });
+    console.log(emailExist)
     if (emailExist.length > 0) {
       res.status(200).json({ ack: false, msg: "Email already exist" });
     } else {
@@ -118,7 +120,8 @@ const login = (req, res) => {
               res.status(201).json({ ack: false, msg: "You account is not active" });
             }
           } else {
-            res.status(201).json({ ack: false, msg: "Invalid password" });
+            res.status(201).json({ ack: false, msg: "Invalid password and  Invalid email" });
+            
           }
         })
         .catch(err => {
@@ -127,8 +130,8 @@ const login = (req, res) => {
         });
     })
     .catch(err => {
-      console.log("Error => ", err.msg);
-      res.status(401).json({ msg: "Invalid email" });
+      console.log("Error => ", err);
+      res.status(401).json({ ack: false,msg: "Invalid email" });
     });
 }
 
