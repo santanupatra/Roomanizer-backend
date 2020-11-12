@@ -198,21 +198,27 @@ const allUserList = async(req, res) => {
     var skip = (limit*page);
     let filterData = {}
   
-    if((keyword.houserules && keyword.houserules.length > 0)||(keyword.amenities && keyword.amenities.length > 0)){
-      console.log("keyword.houserules",keyword.houserules)
-      var rulesArr = keyword.houserules.split(',');
-      var animitiesArr = keyword.amenities.split(',');
-      filterData = {
-          'houseRules.value' :  { $in : rulesArr },
-          'aminities.value' :  { $in : animitiesArr }
-      }
-    }
-    // if(keyword.amenities && keyword.amenities.length > 0){
+    // if((keyword.houserules && keyword.houserules.length > 0)||(keyword.amenities && keyword.amenities.length > 0)){
+    //   console.log("keyword.houserules",keyword.houserules)
+    //   var rulesArr = keyword.houserules.split(',');
     //   var animitiesArr = keyword.amenities.split(',');
     //   filterData = {
+    //       'houseRules.value' :  { $in : rulesArr },
     //       'aminities.value' :  { $in : animitiesArr }
     //   }
     // }
+    if(keyword.amenities && keyword.amenities.length > 0){
+      var animitiesArr = keyword.amenities.split(',');
+      filterData = {
+          'aminities.value' :  { $in : animitiesArr }
+      }
+    }
+    if(keyword.houserules && keyword.houserules.length > 0){
+      var houserulesArr = keyword.houserules.split(',');
+      filterData = {
+          'houseRules.value' :  { $in : houserulesArr }
+      }
+    }
     let bedrooms
     if(keyword.bedrooms){
         bedrooms = keyword.bedrooms;
