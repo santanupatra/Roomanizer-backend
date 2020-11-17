@@ -264,14 +264,22 @@ const allroomList = async(req, res) => {
         filterData.budget = budget;
       } 
       let flateMate
-      if (keyword.gender!=='null') {
+      if (keyword.gender) {
         console.log( "gender",keyword.gender)
         flateMate = keyword.gender;
         filterData.flateMate = flateMate;
       } 
+      if(req.query.loginUserId)   {
+        filterData = {
+          '_id' :  { $nin : req.query.loginUserId }
+        }
+      } 
       filterData.isActive =true;
       filterData.isDeleted =false;
-     console.log("filterData==",filterData)
+    
+     console.log("req.query.loginUserId",req.query.loginUserId)
+      
+    console.log("filterData==",filterData)
     try {
         
         const list = await Room.find(filterData)

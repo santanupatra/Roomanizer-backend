@@ -269,6 +269,8 @@ const allUserList = async(req, res) => {
         //  }
        
       } 
+      console.log("req.query.loginUserId==>",req.query.loginUserId)
+      
       if (keyword.lng && keyword.lat) {
         console.log(keyword.lng , keyword.lat)
         
@@ -288,6 +290,11 @@ const allUserList = async(req, res) => {
                     }
                 }
             }
+            if(req.query.loginUserId)   {
+              filterData = {
+                '_id' :  { $nin : req.query.loginUserId }
+              }
+            }  
       filterData.isAdmin =false;
       filterData.isDeleted =false;
       filterData.userType ="customer";
