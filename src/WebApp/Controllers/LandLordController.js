@@ -269,11 +269,11 @@ const allroomList = async(req, res) => {
         flateMate = keyword.gender;
         filterData.flateMate = flateMate;
       } 
-      if(req.query.loginUserId)   {
-        filterData = {
-          '_id' :  { $nin : req.query.loginUserId }
-        }
-      } 
+      // if(req.query.loginUserId)   {
+      //   filterData = {
+      //     '_id' :  { $nin : req.query.loginUserId }
+      //   }
+      // } 
       filterData.isActive =true;
       filterData.isDeleted =false;
     
