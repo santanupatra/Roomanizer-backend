@@ -109,11 +109,15 @@ const roomImageUpload = async(req, res) => {
             }
         );
         const userExit = await Room.findOne({user_Id:ObjectId(req.params.landLordId)});
-        let existingImage = userExit.roomImage;
+        console.log("userExit",userExit)
+        let existingImage;
         let allExistngImage=[];
-        const newList = await Promise.all(existingImage.map(async(value,key) => {
+        if(userExit){
+           existingImage = userExit.roomImage;
+           const newList = await Promise.all(existingImage.map(async(value,key) => {
             allExistngImage.push({image:value.image})
           }))
+        }
         let allData = req.body;
         let setData ;
         let filesAmount = req.files.length;
@@ -122,7 +126,7 @@ const roomImageUpload = async(req, res) => {
             total_image.push({ image: config.ROOM_IMAGE_PATH + req.files[i].filename });
         }
        let updatedIamge
-       if(allExistngImage){
+       if(allExistngImage && allExistngImage.length >0){
             updatedIamge = allExistngImage.concat(total_image);
        }else{
             updatedIamge = total_image;
@@ -193,17 +197,18 @@ const listroomDetails = async(req, res) => {
 }
 const allroomList = async(req, res) => {
   // console.log('REQ==>',req)
-  console.log("req.query",req.query);
-  console.log("asmita");
+  //console.log("req.query",req.query);
+ 
     if(req.query.page == null || req.query.perpage==null){
         return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
-    console.log('loginDetails',req.query.loginUserId) 
+    //console.log('loginDetails',req.query.loginUserId) 
     let keyword = req.query;
     let limit = parseInt(req.query.perpage);
     let page = req.query.page;
     var skip = (limit*page);
     let filterData = {}
+<<<<<<< HEAD
     console.log('landlord==>',keyword)
     console.log('login  keyword==>',keyword.loginUserId)
 
@@ -222,19 +227,35 @@ const allroomList = async(req, res) => {
     // }
     // else{
     if(keyword.houserules){
+=======
+    let aminitiesFilter = {}
+    let houseRulesFilter = {}
+    let loginUserFilter = {}
+    let locationFilter = {}
+     if(keyword.loginUserId)   {
+        loginUserFilter = {
+          'user_Id' :  { $nin : req.query.loginUserId }
+        }
+      } 
+    if(keyword.houserules && keyword.houserules.length > 0){
+>>>>>>> cc171cd6819cbf7c8f4f709b12fb8c8ad463b2d1
       var rulesArr = keyword.houserules.split(',');
-      filterData = {
+      houseRulesFilter = {
         'houseRules.value' :  { $in : rulesArr }
       }
     }
    
     if(keyword.amenities){
       var animitiesArr = keyword.amenities.split(',');
-      filterData = {
+      aminitiesFilter = {
           'aminities.value' :  { $in : animitiesArr }
       }
     }
+<<<<<<< HEAD
   // }
+=======
+
+>>>>>>> cc171cd6819cbf7c8f4f709b12fb8c8ad463b2d1
     let noOfBedRoom
     if(keyword.bedrooms){
         noOfBedRoom = keyword.bedrooms;
@@ -245,11 +266,20 @@ const allroomList = async(req, res) => {
         city = keyword.city;
         filterData.city = { $regex: city, $options: 'i' };
     } 
-    let address
-    if (keyword.location) {
-      address = keyword.location;
-      filterData.address = address;
-    } 
+   
+    if (keyword.lng && keyword.lat) {
+      locationFilter = {
+           location :
+              { $near :
+                 {
+                   $geometry : {
+                      type : "Point" ,
+                      coordinates : [ keyword.lng , keyword.lat ] },
+                   $maxDistance : 50000
+                 }
+              }
+      }
+  }
     let moveIn
     if (keyword.moveIn) {
       moveIn = { $lt: moment(keyword.moveIn).toDate() };
@@ -271,6 +301,7 @@ const allroomList = async(req, res) => {
         filterData.budget = budget;
       } 
       let flateMate
+<<<<<<< HEAD
       if (keyword.gender) {
         console.log( "gender",keyword.gender)
         flateMate = keyword.gender;
@@ -280,11 +311,40 @@ const allroomList = async(req, res) => {
       filterData.isActive =true;
       filterData.isDeleted =false;
     //  console.log("req.query.loginUserId",req.query.loginUserId)
+=======
+      // if (keyword.gender) {
+      //   console.log("11");
+
+      //   console.log( "gender",keyword.gender)
+      //   flateMate = keyword.gender;
+      //   filterData.flateMate = flateMate;
+      // } 
+      // if(keyword.loginUserId)   {
+      //   console.log("12");
+
+      //   filterData = {
+      //     'user_Id' :  { $nin : req.query.loginUserId }
+      //   }
+      // } 
+      filterData.isActive =true;
+      filterData.isDeleted =false;
+    
+    //  console.log("req.query.loginUserId",req.query.loginUserId)
+    // console.log("keyword==",keyword)
+>>>>>>> cc171cd6819cbf7c8f4f709b12fb8c8ad463b2d1
       
-    console.log("filterData==",filterData)
+    // console.log("filterData==",filterData)
     try {
-        
-        const list = await Room.find(filterData)
+      
+        const list = await Room.find({
+          $and: [
+            filterData,
+            aminitiesFilter,
+            houseRulesFilter,
+            loginUserFilter,
+            locationFilter
+          ]
+        })
         .populate({
             path: "user_Id",
             model: "user"
@@ -292,7 +352,7 @@ const allroomList = async(req, res) => {
         .skip(skip)
         .limit(limit)
         .sort({ createdDate: 'DESC' });
-        console.log("list---->",list);
+       
         const newList = await Promise.all(list.map(async(value,key) => {
            
           const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomId:ObjectId(value._id),isActive:true})
@@ -305,10 +365,18 @@ const allroomList = async(req, res) => {
           }
           return newFav
         }))
-        const count = await Room.find(filterData).countDocuments();
+        const count = await Room.find({
+          $and: [
+            filterData,
+            aminitiesFilter,
+            houseRulesFilter,
+            loginUserFilter,
+            locationFilter
+          ]
+        });
         const result = {
             'list': newList,
-            'count': count,
+            'count': count.length,
             'limit': limit
         };
         res.status(200).json({ data: result});

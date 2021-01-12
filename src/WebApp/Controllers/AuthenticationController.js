@@ -331,7 +331,9 @@ const socialLogin = async (request, response) => {
     let lastName = arrName.slice(1, arrName.length).join(' ');
     const checkForIfExists = await User.find({ 'email': request.body.email }, {}, { session });
     if (checkForIfExists.length > 0) {
-      const token = jwt.create({ id: checkForIfExists[0]._id }, { subject: "Bearer", audience: 'all' });
+      let token = jwt.sign({ id: checkForIfExists[0]._id }, config.SECRET_KEY, { algorithm: config.JWT_ALGORITHM, expiresIn: config.EXPIRES_IN }); // expires in 30 days
+      
+      
       const updateUser = await User.findByIdAndUpdate(
         { _id: checkForIfExists[0]._id },
         {
@@ -340,7 +342,6 @@ const socialLogin = async (request, response) => {
             firstName: firstName,
             lastName: lastName,
             name: request.body.name,
-            profilePicture: request.body.profilePicture,
             socialId: request.body.socialId,
             isSocialMediaUser: true,
             socialMediaType: request.body.socialMediaType,
@@ -349,7 +350,7 @@ const socialLogin = async (request, response) => {
         }
       )
       let logData = {
-        userId: userDetails._id,
+        userId: checkForIfExists[0]._id,
         type: "login",
         loginType: "social"
       }
@@ -360,7 +361,7 @@ const socialLogin = async (request, response) => {
 
       const userExist = await User.find({ socialId: request.body.socialId });
       if (userExist.length > 0) {
-        const token = jwt.create({ id: userExist[0]._id }, { subject: "Bearer", audience: 'all' });
+        let token = jwt.sign({ id: userExist[0]._id }, config.SECRET_KEY, { algorithm: config.JWT_ALGORITHM, expiresIn: config.EXPIRES_IN }); // expires in 30 days
         const updateUser = await User.findByIdAndUpdate(
           { _id: userExist[0]._id },
           {
@@ -369,7 +370,6 @@ const socialLogin = async (request, response) => {
               firstName: firstName,
               lastName: lastName,
               name: request.body.name,
-              profilePicture: request.body.profilePicture,
               socialId: request.body.socialId,
               isSocialMediaUser: true,
               socialMediaType: request.body.socialMediaType,
@@ -378,7 +378,7 @@ const socialLogin = async (request, response) => {
           }
         )
         let logData = {
-          userId: userDetails._id,
+          userId: userExist[0]._id,
           type: "login",
           loginType: "social"
         }
@@ -391,20 +391,19 @@ const socialLogin = async (request, response) => {
           firstName: firstName,
           lastName: lastName,
           name: request.body.name,
-          profilePicture: request.body.profilePicture,
           socialId: request.body.socialId,
           isSocialMediaUser: true,
           socialMediaType: request.body.socialMediaType,
           lastLogin: new Date().toISOString(),
         });
         let logData = {
-          userId: userDetails._id,
+          userId: users._id,
           type: "login",
           loginType: "social"
         }
         new LoginDetails(logData).save();
         const userData = await User.findById({ _id: users._id });
-        const token = jwt.create({ id: userData._id }, { subject: "Bearer", audience: 'all' });
+        let token = jwt.sign({ id: userData._id }, config.SECRET_KEY, { algorithm: config.JWT_ALGORITHM, expiresIn: config.EXPIRES_IN }); // expires in 30 days
 
         response.status(200).json({ ack: true, details: 'Logged in succesfully', token: token, data: userData });
 
