@@ -204,30 +204,37 @@ const allroomList = async(req, res) => {
     let page = req.query.page;
     var skip = (limit*page);
     let filterData = {}
-    console.log('houserules==>',keyword.houserules)
-    if((keyword.houserules && keyword.houserules.length > 0)&&(keyword.amenities && keyword.amenities.length > 0)){
-      var rulesArr = keyword.houserules.split(',');
-      var animitiesArr = keyword.amenities.split(',');
+    console.log('landlord==>',keyword)
+    console.log('login  keyword==>',keyword.loginUserId)
+
+    if(keyword.loginUserId)   {
       filterData = {
-          'houseRules.value' :  { $in : rulesArr },
-          'aminities.value' :  { $in : animitiesArr }
+        '_id' :  { $nin : keyword.loginUserId }
       }
-    }
-    else{
-    if(keyword.houserules && keyword.houserules.length > 0){
+    } 
+    // if(keyword.houserules &&keyword.amenities ){
+    //   var rulesArr = keyword.houserules.split(',');
+    //   var animitiesArr = keyword.amenities.split(',');
+    //   filterData = {
+    //       'houseRules.value' :  { $in : rulesArr },
+    //       'aminities.value' :  { $in : animitiesArr }
+    //   }
+    // }
+    // else{
+    if(keyword.houserules){
       var rulesArr = keyword.houserules.split(',');
       filterData = {
         'houseRules.value' :  { $in : rulesArr }
       }
     }
    
-    if(keyword.amenities && keyword.amenities.length > 0){
+    if(keyword.amenities){
       var animitiesArr = keyword.amenities.split(',');
       filterData = {
           'aminities.value' :  { $in : animitiesArr }
       }
     }
-  }
+  // }
     let noOfBedRoom
     if(keyword.bedrooms){
         noOfBedRoom = keyword.bedrooms;
@@ -269,15 +276,10 @@ const allroomList = async(req, res) => {
         flateMate = keyword.gender;
         filterData.flateMate = flateMate;
       } 
-      // if(req.query.loginUserId)   {
-      //   filterData = {
-      //     '_id' :  { $nin : req.query.loginUserId }
-      //   }
-      // } 
+     
       filterData.isActive =true;
       filterData.isDeleted =false;
-    
-     console.log("req.query.loginUserId",req.query.loginUserId)
+    //  console.log("req.query.loginUserId",req.query.loginUserId)
       
     console.log("filterData==",filterData)
     try {

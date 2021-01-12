@@ -290,11 +290,11 @@ const allUserList = async(req, res) => {
                     }
                 }
             }
-            if(req.query.loginUserId)   {
-              filterData = {
-                '_id' :  { $nin : req.query.loginUserId }
-              }
-            }  
+            // if(req.query.loginUserId)   {
+            //   filterData = {
+            //     '_id' :  { $nin : req.query.loginUserId }
+            //   }
+            // }  
       filterData.isAdmin =false;
       filterData.isDeleted =false;
       filterData.userType ="customer";

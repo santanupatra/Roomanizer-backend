@@ -120,7 +120,7 @@ const login = (req, res) => {
               res.status(201).json({ ack: false, msg: "You account is not active" });
             }
           } else {
-            res.status(201).json({ ack: false, msg: "Invalid password and  Invalid email" });
+            res.status(201).json({ ack: false, msg: "Invalid password" });
             
           }
         })
@@ -130,7 +130,7 @@ const login = (req, res) => {
         });
     })
     .catch(err => {
-      console.log("Error => ", err);
+      // console.log("Error => ", err);
       res.status(401).json({ ack: false,msg: "Invalid email" });
     });
 }
@@ -193,10 +193,6 @@ const forgotPassword = async (request, response, next) => {
             res.status(200).send('recovery email sent');
           }
         })
-
-
-
-
         // let sendMail = nodemailer.send({email,subject,body});
         console.log(userDetails)
         const updateUser = await User.findOneAndUpdate(
