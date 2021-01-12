@@ -22,14 +22,9 @@ const changePassword = (req, res) => {
         _id: req.params.userId
     })
     .then(user => {
-      console.log("User",user)
-      console.log("user",user.password)
-      console.log("req.body.currentPassword",req.body.currentPassword)
       const password=req.body.currentPassword
       var compering=bcrypt.compareSync(password, user.password);
-      console.log("compering",compering)
         if (compering) {
-          console.log("inside",req.body.currentPassword)
             if (req.body.newPassword == req.body.confirmPassword) {
                 const hash = bcrypt.hashSync(req.body.newPassword, config.SALT_ROUND);
                 User.findByIdAndUpdate(
@@ -55,61 +50,11 @@ const changePassword = (req, res) => {
         }
     })
     .catch(err => {
-        console.log('Error => ', err.msg);
+       // console.log('Error => ', err.msg);
         res.status(401).json({ msg: "User not found with this id" });
     });
 }
-/**
- * getProfile
- * Get user profile details
- * return JSON
- */
-// const getProfile = async(req, res) => {
-//     if(req.params.userId == null) {
-//         return res.status(400).jsn({ack:false, msg:"Parameter missing !!!" });
-//     }
-//     try {
-//         //const userDetails = await User.findById({ _id: req.params.userId });
-//             // let filterData = {
-//             //     _id: {$in:[req.params.userId]}
-//             // }
-//             const userDet = await User.aggregate([
-//                 {
-//                     $match: {'_id':ObjectId(req.params.userId)}
-//                 },
-                
-//                 {
-//                     $lookup: {
-//                         from: 'login_details',
-//                         localField: '_id',
-//                         foreignField: 'userId',
-//                         as: 'LoginDetails'
-//                     }
-//                 }
-                
-//             ]);
 
-//         let loginDetails = await LoginDetails.find({userId:req.params.userId,type:"login",isActive:true}); 
-//         let todayLoginCount = loginDetails.length; 
-//         let totalLoginCount= userDet[0].LoginDetails.length;
-//         let UserDetails = {
-//             userDetails:userDet,
-//             totalLoginCount:totalLoginCount,
-//             todayLoginCount:todayLoginCount,
-//             lastLogin:userDet[0].lastLogin
-//         }
-//         //console.log('totalLoginCount',loginDetails,'data==',new Date('2020 ,08, 22'));
-//       // if(userDetails){
-//          res.status(200).json({ack:true, data: UserDetails });
-//     //    }else{
-//     //     res.status(200).json({ack:false, data: [] });
-
-//     //    }
-//     } catch(err) {
-//         console.log("Error => ", err.message);
-//         res.status(500).json({ msg: "Something went wrong" });
-//     };
-// }
 /**
  * getProfile
  * Get admin profile details
@@ -198,33 +143,43 @@ const allUserList = async(req, res) => {
     if(req.query.page == null || req.query.perpage==null){
         return res.status(400).send({ack:1, message:"Parameter missing..."})
     }
-    console.log('loginDetails',req.query.loginUserId)
-
     let keyword = req.query;
     let limit = parseInt(req.query.perpage);
     let page = req.query.page;
     var skip = (limit*page);
     let filterData = {}
-  
-    // if((keyword.houserules && keyword.houserules.length > 0)||(keyword.amenities && keyword.amenities.length > 0)){
-    //   console.log("keyword.houserules",keyword.houserules)
-    //   var rulesArr = keyword.houserules.split(',');
-    //   var animitiesArr = keyword.amenities.split(',');
-    //   filterData = {
-    //       'houseRules.value' :  { $in : rulesArr },
-    //       'aminities.value' :  { $in : animitiesArr }
-    //   }
-    // }
+    let aminitiesFilter = {}
+    let houseRulesFilter = {}
+    let loginUserFilter = {}
+    let locationFilter = {}
+    if(keyword.loginUserId)   {
+      loginUserFilter = {
+          '_id' :  { $nin : req.query.loginUserId }
+        }
+      }  
     if(keyword.amenities && keyword.amenities.length > 0){
       var animitiesArr = keyword.amenities.split(',');
-      filterData = {
+      aminitiesFilter = {
           'aminities.value' :  { $in : animitiesArr }
       }
     }
     if(keyword.houserules && keyword.houserules.length > 0){
       var houserulesArr = keyword.houserules.split(',');
-      filterData = {
+      houseRulesFilter = {
           'houseRules.value' :  { $in : houserulesArr }
+      }
+    }
+    if (keyword.lng && keyword.lat) {
+      locationFilter = {
+           location :
+              { $near :
+                 {
+                   $geometry : {
+                      type : "Point" ,
+                      coordinates : [ keyword.lng , keyword.lat ] },
+                   $maxDistance : 50000
+                 }
+              }
       }
     }
     let bedrooms
@@ -252,74 +207,29 @@ const allUserList = async(req, res) => {
         gender = keyword.gender;
         filterData.gender = gender;
       } 
-      //let location
       
-       if (keyword.location) {
-      //   console.log(keyword.location)
-      //  // location = keyword.location.replace("%20", "");
-      
-        //   filterData.location = keyword.location: {
-        //   $near: {
-        //    $maxDistance: 1000,
-        //    $geometry: {
-        //     type: "Point",
-        //     coordinates: [long, latt]
-        //    }
-        //   }
-        //  }
-       
-      } 
-      console.log("req.query.loginUserId==>",req.query.loginUserId)
-      
-      if (keyword.lng && keyword.lat) {
-        console.log(keyword.lng , keyword.lat)
-        
-                filterData = {
-                    location:
-                    {
-                        $near:
-                        {
-                            $geometry: {
-                                type: "Point",
-                                coordinates: [keyword.lng, keyword.lat]
-                            },
-                            $maxDistance: 5000,
-                            //spherical: true
-
-                        }
-                    }
-                }
-            }
-            if(req.query.loginUserId)   {
-              filterData = {
-                '_id' :  { $nin : req.query.loginUserId }
-              }
-            }  
+           
       filterData.isAdmin =false;
       filterData.isDeleted =false;
       filterData.userType ="customer";
-        console.log(keyword)
+     
     try {
-         console.log(filterData)
-        const list = await User.find(filterData)
+        
+        const list = await User.find({
+          $and: [
+            filterData,
+            aminitiesFilter,
+            houseRulesFilter,
+            loginUserFilter,
+            locationFilter
+          ]
+        })
         .skip(skip)
         .limit(limit)
         .sort({ createdDate: 'DESC' });
-
-      //   const list = await User.aggregate([
-      //     { "$geoNear": {
-      //         "near": {
-      //             "type": "Point",
-      //             "coordinates": [keyword.lng,keyword.lat]
-      //         },
-      //          "distanceField": "location",
-      //          "spherical": true,
-      //         "maxDistance": 10000
-      //     }}
-      // ])
+        
          
         const newList = await Promise.all(list.map(async(value,key) => {
-           
           const userList =  await Favorite.find({loginUserId:ObjectId(req.query.loginUserId),roomMateId:ObjectId(value._id),isActive:true})
           
           let newFav = {...value.toJSON()}
@@ -330,10 +240,18 @@ const allUserList = async(req, res) => {
           }
           return newFav
         }))
-        const count = await User.find(filterData).count();
+        const count = await User.find({
+          $and: [
+            filterData,
+            aminitiesFilter,
+            houseRulesFilter,
+            loginUserFilter,
+            locationFilter
+          ]
+        });
         const result = {
             'list': newList,
-            'count': count,
+            'count': count.length,
             'limit': limit
         };
         res.status(200).json({ data: result});

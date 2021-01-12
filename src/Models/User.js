@@ -93,8 +93,8 @@ const schema = new Schema({
         type: Number
     },
     // location: {
-    //     type: { type: String, default: "Point" },
-    //     coordinates: [] //[<longitude>, <latitude>]
+    //     type: { type: "Point" },
+    //     coordiantes: [Number] //[<longitude>, <latitude>]
     // },
     location: {
         type: pointSchema,
