@@ -224,13 +224,12 @@ const allroomList = async(req, res) => {
       }
     }
    
-    if(keyword.amenities && keyword.amenities.length > 0){
+    if(keyword.amenities){
       var animitiesArr = keyword.amenities.split(',');
       aminitiesFilter = {
           'aminities.value' :  { $in : animitiesArr }
       }
     }
-
     let noOfBedRoom
     if(keyword.bedrooms){
         noOfBedRoom = keyword.bedrooms;

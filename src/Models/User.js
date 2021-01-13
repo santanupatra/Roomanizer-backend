@@ -9,10 +9,12 @@ const pointSchema = new mongoose.Schema({
   type: {
     type: String,
     enum: ['Point'],
+    default: "Point" 
    // required: true
   },
   coordinates: {
     type: [Number],
+    default: [0,0] 
    // required: true
   }
 })
@@ -25,6 +27,9 @@ const schema = new Schema({
         // required: true
     },
     lastName: {
+        type: String
+    },
+    phone_number: {
         type: String
     },
     name: {
@@ -102,7 +107,7 @@ const schema = new Schema({
       },
     userType: {
         type: String,
-        enum: ['admin','customer','landlord'],
+        enum: ['admin','customer','landlord','agent'],
         default: "customer"
     },
     country: {
