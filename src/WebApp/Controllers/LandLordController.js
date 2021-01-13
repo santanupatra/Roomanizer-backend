@@ -208,26 +208,6 @@ const allroomList = async(req, res) => {
     let page = req.query.page;
     var skip = (limit*page);
     let filterData = {}
-<<<<<<< HEAD
-    console.log('landlord==>',keyword)
-    console.log('login  keyword==>',keyword.loginUserId)
-
-    if(keyword.loginUserId)   {
-      filterData = {
-        '_id' :  { $nin : keyword.loginUserId }
-      }
-    } 
-    // if(keyword.houserules &&keyword.amenities ){
-    //   var rulesArr = keyword.houserules.split(',');
-    //   var animitiesArr = keyword.amenities.split(',');
-    //   filterData = {
-    //       'houseRules.value' :  { $in : rulesArr },
-    //       'aminities.value' :  { $in : animitiesArr }
-    //   }
-    // }
-    // else{
-    if(keyword.houserules){
-=======
     let aminitiesFilter = {}
     let houseRulesFilter = {}
     let loginUserFilter = {}
@@ -238,7 +218,6 @@ const allroomList = async(req, res) => {
         }
       } 
     if(keyword.houserules && keyword.houserules.length > 0){
->>>>>>> cc171cd6819cbf7c8f4f709b12fb8c8ad463b2d1
       var rulesArr = keyword.houserules.split(',');
       houseRulesFilter = {
         'houseRules.value' :  { $in : rulesArr }
@@ -251,11 +230,6 @@ const allroomList = async(req, res) => {
           'aminities.value' :  { $in : animitiesArr }
       }
     }
-<<<<<<< HEAD
-  // }
-=======
-
->>>>>>> cc171cd6819cbf7c8f4f709b12fb8c8ad463b2d1
     let noOfBedRoom
     if(keyword.bedrooms){
         noOfBedRoom = keyword.bedrooms;
@@ -301,17 +275,6 @@ const allroomList = async(req, res) => {
         filterData.budget = budget;
       } 
       let flateMate
-<<<<<<< HEAD
-      if (keyword.gender) {
-        console.log( "gender",keyword.gender)
-        flateMate = keyword.gender;
-        filterData.flateMate = flateMate;
-      } 
-     
-      filterData.isActive =true;
-      filterData.isDeleted =false;
-    //  console.log("req.query.loginUserId",req.query.loginUserId)
-=======
       // if (keyword.gender) {
       //   console.log("11");
 
@@ -331,7 +294,6 @@ const allroomList = async(req, res) => {
     
     //  console.log("req.query.loginUserId",req.query.loginUserId)
     // console.log("keyword==",keyword)
->>>>>>> cc171cd6819cbf7c8f4f709b12fb8c8ad463b2d1
       
     // console.log("filterData==",filterData)
     try {
