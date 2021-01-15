@@ -69,4 +69,16 @@ const listAllAgent = async(req, res) => {
         res.status(500).json({msg:"Something went wrong"});
     }
 }
-export default {AddAgentProperty,listAllAgent }
+const listProperty = async(req, res) => {
+    if(req.params.userId == null) {
+        return res.status(400).jsn({msg:"Parameter missing..."});
+    }
+    try {
+        const agentlist = await AgentProperty.findById({ _id: req.params.userId });
+        res.status(200).json({data:agentlist});
+    } catch (err) {
+        console.log('Error => ',err.message);
+        res.status(500).json({msg:"Something went wrong"});
+    }
+}
+export default {AddAgentProperty,listProperty,listAllAgent }
