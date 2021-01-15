@@ -1,6 +1,7 @@
 import User from '../../Models/User';
 import AgentProperty from '../../Models/AgentProperty';
 import config from '../../../config/config'
+const ObjectId = mongoose.Types.ObjectId;
 
 import mongoose from "mongoose";
 
@@ -61,7 +62,7 @@ const  AddAgentProperty= async(req, res) => {
 const listAllAgent = async(req, res) => {
     console.log("wertyu")
     try {
-        const agentlist = await AgentProperty.find({isDeleted: false });
+        const agentlist = await AgentProperty.find({user_Id:ObjectId(req.params.userId),isDeleted: false });
         console.log(agentlist)
         res.status(200).json({data:agentlist});
     } catch (err) {
