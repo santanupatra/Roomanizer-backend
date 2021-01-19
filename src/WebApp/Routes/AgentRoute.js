@@ -5,6 +5,7 @@ import upload from '../../../config/FileUpload';
 // intializing express router
 const router = express.Router();
 router.post('/AddAgentProperty',upload.uploadRoomImage,AgentController.AddAgentProperty);
-router.get('/agent/:userId',AgentController.listProperty);
-router.get('/agent',AgentController.listAllAgent);
+router.put('/updateAgentProperty/:userId', upload.uploadRoomImage,AgentController.updateAgentProperty);
+router.get('/agentt/:userId',AgentController.listProperty);
+router.get('/agent/:userId',AgentController.listAllAgent);
 export default router;

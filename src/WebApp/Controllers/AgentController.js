@@ -1,16 +1,17 @@
 import User from '../../Models/User';
 import AgentProperty from '../../Models/AgentProperty';
 import config from '../../../config/config'
-
+const ObjectId = mongoose.Types.ObjectId;
 import mongoose from "mongoose";
 
 /*Add agent property*/
 const  AddAgentProperty= async(req, res) => {
-    if(req.body.userId==null){
-        return res.status(400).json({msg: "parameter missing.."});
-    }
+    // if(req.body.userId==null){
+    //     return res.status(400).json({msg: "parameter missing.."});
+    // }
     const allData=req.body;
-    console.log(allData,req.files)
+    console.log("allData",allData.aminities)
+    console.log("req.file",req.files)
     try {
         var setRoomData = {
             user_Id:allData.userId,
@@ -21,7 +22,7 @@ const  AddAgentProperty= async(req, res) => {
             houseRules:allData.houseRules,
             aminities:allData.aminities,
             duration:allData.duration,
-            moveIn:allData.moveIn,
+            readyToMove:allData.readyToMove,
             area:allData.area,
             // address:allData.address,
             ageRange:allData.ageRange,
@@ -59,9 +60,9 @@ const  AddAgentProperty= async(req, res) => {
 }
 
 const listAllAgent = async(req, res) => {
-    console.log("wertyu")
+    console.log("req.query.userId",req.params.userId)
     try {
-        const agentlist = await AgentProperty.find({isDeleted: false });
+        const agentlist = await AgentProperty.find({user_Id:ObjectId(req.params.userId),isDeleted: false });
         console.log(agentlist)
         res.status(200).json({data:agentlist});
     } catch (err) {
@@ -81,4 +82,47 @@ const listProperty = async(req, res) => {
         res.status(500).json({msg:"Something went wrong"});
     }
 }
-export default {AddAgentProperty,listProperty,listAllAgent }
+const updateAgentProperty= async(req,res)=>{
+    const allData=req.body;
+    console.log("allData",allData.aminities)
+    console.log("req.file",req.files)
+    try {
+        var setRoomData = {
+            user_Id:allData.userId,
+            propertyName:allData.propertyName,
+            roomName:allData.roomName,
+            aboutRoom:allData.aboutRoom,
+            noOfBedRoom:allData.noOfBedRoom,
+            houseRules:allData.houseRules,
+            aminities:allData.aminities,
+            duration:allData.duration,
+            readyToMove:allData.readyToMove,
+            area:allData.area,
+            // address:allData.address,
+            ageRange:allData.ageRange,
+            city:allData.city,
+            zipCode:allData.zipCode,
+            // longitude:allData.longitude,
+            // latitude:allData.latitude,
+            // location: {
+            //     type: "Point",
+            //     coordinates: [allData.longitude,allData.latitude]
+            // },
+         }
+         const update = await AgentProperty.findByIdAndUpdate(
+            { _id: req.params.userId },
+              {
+                $set: setRoomData
+              }
+          );
+          if(update){
+            res.status(200).json({msg:"Successfully updated "});
+          }
+    }catch (err)
+     {
+        console.log('Error => ',err.message);   
+        res.status(500).json({msg:"Something went wrong"});
+    }
+
+}
+export default {AddAgentProperty,listProperty,listAllAgent,updateAgentProperty }

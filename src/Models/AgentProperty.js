@@ -52,7 +52,7 @@ const schema = new Schema({
     duration: {
         type: String, 
     },
-    moveIn: {
+    readyToMove: {
         type: Date, 
     },
     area: {
