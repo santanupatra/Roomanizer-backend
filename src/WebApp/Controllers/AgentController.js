@@ -2,6 +2,7 @@ import User from '../../Models/User';
 import AgentProperty from '../../Models/AgentProperty';
 import config from '../../../config/config'
 const ObjectId = mongoose.Types.ObjectId;
+
 import mongoose from "mongoose";
 
 /*Add agent property*/
