@@ -11,8 +11,9 @@ const  AddAgentProperty= async(req, res) => {
     //     return res.status(400).json({msg: "parameter missing.."});
     // }
     const allData=req.body;
+    console.log("14--------------->",allData)
     console.log("allData",allData.aminities)
-    console.log("req.file",req.files)
+    console.log("req.file",req.file)
     try {
         var setRoomData = {
             user_Id:allData.userId,
@@ -126,4 +127,7 @@ const updateAgentProperty= async(req,res)=>{
     }
 
 }
-export default {AddAgentProperty,listProperty,listAllAgent,updateAgentProperty }
+const roomImageUpload = async(req, res) => {
+
+}
+export default {AddAgentProperty,listProperty,listAllAgent,updateAgentProperty,roomImageUpload }

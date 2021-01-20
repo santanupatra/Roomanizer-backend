@@ -7,6 +7,6 @@ const router = express.Router();
 router.post('/AddAgentProperty',upload.uploadRoomImage,AgentController.AddAgentProperty);
 router.put('/updateAgentProperty/:userId', upload.uploadRoomImage,AgentController.updateAgentProperty);
 router.get('/agentt/:userId',AgentController.listProperty);
-
+router.put('/roomImage/:userId', upload.uploadRoomImage,AgentController.roomImageUpload);
 router.get('/agent/:userId',AgentController.listAllAgent);
 export default router;
