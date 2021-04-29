@@ -116,6 +116,10 @@ const schema = new Schema({
         type: Boolean,
         default: true
     },
+    isDraft: {
+        type: Boolean,
+        default: false
+    },
     createdDate: {
         type: Date,
         default: Date.now

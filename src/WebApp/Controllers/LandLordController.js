@@ -53,6 +53,7 @@ const updateLandLord = async(req, res) => {
                 zipCode:allData.zipCode,
                 longitude:allData.longitude,
                 latitude:allData.latitude,
+                isDraft:true,
                 location: {
                     type: "Point",
                     coordinates: [allData.longitude,allData.latitude]
@@ -64,12 +65,11 @@ const updateLandLord = async(req, res) => {
                   $set: setUserData
                 }
             );
-            console.log(req.params.landLordId)
             const roomDetails = await Room.findOne({
                 
                 user_Id: ObjectId(req.params.landLordId)
             });
-            console.log(req.params.landLordId)
+            
             if(roomDetails){
                 const roomUpdate = await Room.findByIdAndUpdate(
                     { _id: roomDetails._id },
@@ -188,13 +188,27 @@ const listroomDetails = async(req, res) => {
     }
     
     try {
-        const details = await Room.findOne({ user_Id: ObjectId(req.params.landLordId)});
+        const details = await Room.findById({ _id: req.params.landLordId});
         res.status(200).json({data:details});
     } catch (err) {
-        console.log('Error3 => ',err.message);
+        //console.log('Error3 => ',err.message);
         res.status(500).json({msg:"Something went wrong"});
     }
 }
+const roomImageDetails = async(req, res) => {
+  if(req.params.landLordId == null) {
+      return res.status(400).jsn({msg:"Parameter missing..."});
+  }
+  
+  try {
+      const details = await Room.findOne({ user_Id: ObjectId(req.params.landLordId)});
+      res.status(200).json({data:details});
+  } catch (err) {
+      console.log('Error3 => ',err.message);
+      res.status(500).json({msg:"Something went wrong"});
+  }
+}
+
 const allroomList = async(req, res) => {
   // console.log('REQ==>',req)
   //console.log("req.query",req.query);
@@ -291,6 +305,7 @@ const allroomList = async(req, res) => {
       // } 
       filterData.isActive =true;
       filterData.isDeleted =false;
+      filterData.isDraft =false;
     
     //  console.log("req.query.loginUserId",req.query.loginUserId)
     // console.log("keyword==",keyword)
@@ -349,4 +364,4 @@ const allroomList = async(req, res) => {
     }
   }
 
-export default { updateLandLord,roomImageUpload,deleteRoomImage,listroomDetails,allroomList}
+export default { updateLandLord,roomImageUpload,deleteRoomImage,listroomDetails,roomImageDetails,allroomList}

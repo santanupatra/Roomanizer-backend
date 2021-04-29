@@ -1,5 +1,7 @@
 import express from 'express';
 import mongoose from 'mongoose';
+console.log(mongoose.connection.readyState);
+
 import cors from 'cors';
 import config from './config/config';
 import header from './middleware/header';

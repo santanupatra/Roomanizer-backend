@@ -7,6 +7,7 @@ const router = express.Router();
 router.put('/:landLordId', Authorization,LandLordController.updateLandLord);
 router.put('/roomImage/:landLordId', upload.uploadRoomImage,LandLordController.roomImageUpload);
 router.get('/room/:landLordId',LandLordController.listroomDetails);
+router.get('/roomDetails/:landLordId',LandLordController.roomImageDetails);
 router.get('/',LandLordController.allroomList);
 router.delete('/:roomId/:imageId',Authorization,LandLordController.deleteRoomImage);
 export default router;
